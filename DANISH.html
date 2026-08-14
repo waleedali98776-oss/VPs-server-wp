@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WALEED KHAN OFFLINE TOOL </title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070b14;--card:rgba(255,255,255,.05);--border:rgba(255,255,255,.09);--text:#e5e7eb;--muted:#8b98ad;--acc1:#7c3aed;--acc2:#06b6d4;--green:#22c55e;--red:#ef4444;--yellow:#eab308}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.bg-blobs{position:fixed;inset:0;z-index:-1;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.35;animation:float 14s ease-in-out infinite alternate}
+.b1{width:480px;height:480px;background:#7c3aed;top:-120px;left:-100px}
+.b2{width:420px;height:420px;background:#06b6d4;bottom:-140px;right:-80px;animation-delay:-6s}
+.b3{width:300px;height:300px;background:#db2777;top:40%;left:55%;animation-delay:-3s}
+@keyframes float{from{transform:translate(0,0) scale(1)}to{transform:translate(50px,40px) scale(1.15)}}
+.glass{background:var(--card);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--border);border-radius:18px}
+.hidden{display:none!important}
+.screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.auth-card{width:100%;max-width:430px;padding:34px;animation:fadeUp .5s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.logo{text-align:center;margin-bottom:22px}
+.logo .icon{font-size:44px}
+.logo h1{font-size:22px;font-weight:700;background:linear-gradient(90deg,var(--acc1),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo p{color:var(--muted);font-size:12px}
+.tabs{display:flex;gap:8px;background:rgba(0,0,0,.3);padding:5px;border-radius:12px;margin-bottom:18px}
+.tabs button{flex:1;padding:10px;border:none;border-radius:9px;background:transparent;color:var(--muted);font-weight:600;cursor:pointer;transition:.25s;font-size:13px}
+.tabs button.active{background:linear-gradient(90deg,var(--acc1),var(--acc2));color:#fff}
+label{display:block;font-size:12px;color:var(--muted);margin:12px 0 5px;font-weight:500}
+input,select,textarea{width:100%;padding:12px 14px;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:11px;color:var(--text);font-size:14px;outline:none;transition:.25s;font-family:inherit}
+input:focus,select:focus,textarea:focus{border-color:var(--acc2);box-shadow:0 0 0 3px rgba(6,182,212,.15)}
+input[type=file]{padding:9px;font-size:12px;cursor:pointer}
+input[type=file]::file-selector-button{background:linear-gradient(90deg,var(--acc1),var(--acc2));border:none;color:#fff;padding:7px 14px;border-radius:8px;cursor:pointer;font-weight:600;margin-right:10px;font-size:11px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 20px;border:none;border-radius:11px;background:linear-gradient(90deg,var(--acc1),var(--acc2));color:#fff;font-weight:600;cursor:pointer;transition:.25s;font-size:14px;font-family:inherit}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(124,58,237,.4)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-block{width:100%;margin-top:18px}
+.btn-ghost{background:rgba(255,255,255,.07);border:1px solid var(--border)}
+.btn-ghost:hover{box-shadow:none;border-color:var(--acc2)}
+.btn-danger{background:linear-gradient(90deg,#dc2626,#ef4444)}
+.btn-sm{padding:7px 13px;font-size:12px;border-radius:9px}
+.key-box{margin-top:18px;padding:14px;background:rgba(0,0,0,.35);border:1px dashed var(--border);border-radius:12px;text-align:center}
+.key-box .k{font-size:17px;font-weight:700;letter-spacing:2px;color:var(--acc2);word-break:break-all}
+.key-box .st{font-size:11px;margin-top:6px;font-weight:600}
+.st.ok{color:var(--green)}.st.no{color:var(--red)}.st.wait{color:var(--yellow)}
+#appScreen{display:block;min-height:100vh;padding:0}
+nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 24px;background:rgba(7,11,20,.8);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.brand{font-weight:800;font-size:16px;background:linear-gradient(90deg,var(--acc1),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+.nav-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.nav-tabs button{padding:8px 16px;border:none;border-radius:9px;background:transparent;color:var(--muted);font-weight:600;cursor:pointer;font-size:13px;transition:.2s;font-family:inherit}
+.nav-tabs button.active{background:rgba(124,58,237,.2);color:#c4b5fd;border:1px solid rgba(124,58,237,.4)}
+.user-chip{display:flex;align-items:center;gap:10px;font-size:13px}
+.chip{padding:6px 13px;border-radius:20px;background:rgba(6,182,212,.13);border:1px solid rgba(6,182,212,.35);color:#67e8f9;font-weight:600;font-size:12px}
+main{max-width:1200px;margin:0 auto;padding:26px 22px 70px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px}
+.stat{padding:18px;position:relative;overflow:hidden;animation:fadeUp .4s ease}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--acc1),var(--acc2))}
+.stat .n{font-size:26px;font-weight:800}
+.stat .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+.form-grid .full{grid-column:1/-1}
+.card{padding:24px;margin-bottom:22px}
+.card h2{font-size:16px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.card .sub{font-size:12px;color:var(--muted);margin-bottom:14px}
+.sess-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.sess{padding:18px;animation:fadeUp .35s ease;transition:.25s}
+.sess:hover{transform:translateY(-3px);border-color:rgba(124,58,237,.5)}
+.sess .top{display:flex;justify-content:space-between;align-items:start;margin-bottom:10px;gap:8px}
+.sess .id{font-size:12px;font-weight:700;color:#c4b5fd;word-break:break-all}
+.badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.badge.g{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.35)}
+.badge.r{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.35)}
+.badge.y{background:rgba(234,179,8,.15);color:#facc15;border:1px solid rgba(234,179,8,.35)}
+.badge.c{background:rgba(6,182,212,.15);color:#67e8f9;border:1px solid rgba(6,182,212,.35)}
+.sess .meta{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;color:var(--muted);margin-bottom:12px}
+.sess .meta b{color:var(--text);font-weight:600}
+.sess .acts{display:flex;gap:6px;flex-wrap:wrap}
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty .e{font-size:52px;margin-bottom:12px}
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.key-list{max-height:220px;overflow-y:auto;margin-top:12px;display:flex;flex-direction:column;gap:6px}
+.key-row{display:flex;justify-content:space-between;align-items:center;padding:9px 13px;background:rgba(0,0,0,.3);border-radius:9px;font-size:12px;font-family:monospace}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
+.modal-box{width:100%;max-width:720px;max-height:82vh;padding:22px;display:flex;flex-direction:column}
+.modal-box pre{flex:1;overflow:auto;background:rgba(0,0,0,.5);border-radius:12px;padding:14px;font-size:11px;line-height:1.7;color:#a5f3fc;white-space:pre-wrap;word-break:break-word;margin-top:12px}
+.modal-head{display:flex;justify-content:space-between;align-items:center}
+#toast{position:fixed;bottom:24px;right:24px;z-index:200;display:flex;flex-direction:column;gap:8px}
+.t{padding:13px 20px;border-radius:12px;font-size:13px;font-weight:600;animation:slideIn .3s ease;backdrop-filter:blur(12px);border:1px solid var(--border);max-width:340px}
+.t.ok{background:rgba(34,197,94,.9);color:#fff}
+.t.err{background:rgba(239,68,68,.9);color:#fff}
+.t.info{background:rgba(30,41,59,.95);color:var(--text)}
+@keyframes slideIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+.pulse{animation:pulse 1.6s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:rgba(124,58,237,.5);border-radius:8px}::-webkit-scrollbar-track{background:transparent}
+@media(max-width:720px){.form-grid,.admin-grid{grid-template-columns:1fr}nav{justify-content:center}}
+</style>
+</head>
+<body>
+<div class="bg-blobs"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div id="toast"></div>
+
+<div id="authScreen" class="screen">
+  <div class="auth-card glass">
+    <div class="logo"><div class="icon">⚡</div><h1>WALEED KHAN WA SERVER</h1><p>WhatsApp Automation Panel v2.0</p></div>
+    <div class="tabs">
+      <button id="tabLogin" class="active" onclick="switchAuth('login')">🔑 Login</button>
+      <button id="tabSignup" onclick="switchAuth('signup')">✨ Sign Up</button>
+    </div>
+    <form id="authForm" onsubmit="doAuth(event)">
+      <label>Username</label><input id="aUser" required autocomplete="username" placeholder="Your username">
+      <label>Password</label><input id="aPass" type="password" required autocomplete="current-password" placeholder="••••••••">
+      <button class="btn btn-block" id="authBtn" type="submit">🚀 Login</button>
+    </form>
+    <div class="key-box">
+      <div style="font-size:11px;color:var(--muted)">🔐 YOUR DEVICE APPROVAL KEY</div>
+      <div class="k" id="authKey">Generating...</div>
+      <div class="st wait" id="authKeyStatus">⏳ Checking...</div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn btn-ghost btn-sm" style="flex:1" onclick="copyKey()">📋 Copy Key</button>
+        <button class="btn btn-ghost btn-sm" style="flex:1" onclick="regenKey()">🔄 New Key</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="waitingScreen" class="screen hidden">
+  <div class="auth-card glass" style="text-align:center">
+    <div style="font-size:52px" class="pulse">⏳</div>
+    <h2 style="margin:12px 0 6px">Waiting For Approval</h2>
+    <p style="font-size:13px;color:var(--muted)">Aapki key abhi approved nahi hai. Ye key admin ko bhejein — jab wo GitHub ki <b>approval.txt</b> mein add kar denge, aap khud-ba-khud login ho jayenge.</p>
+    <div class="key-box">
+      <div class="k" id="waitKey">—</div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="copyKey()">📋 Copy Key</button>
+    </div>
+    <button class="btn btn-block" onclick="checkApprovalRoute()">🔁 Check Approval Now</button>
+    <button class="btn btn-ghost btn-block" onclick="logout()">↩ Logout</button>
+    <p id="waitStatus" style="font-size:11px;color:var(--muted);margin-top:12px" class="pulse">Auto-checking every 10 seconds...</p>
+  </div>
+</div>
+
+<div id="appScreen" class="hidden">
+  <nav>
+    <div class="brand">⚡ DK WA SERVER</div>
+    <div class="nav-tabs">
+      <button id="nt-dash" class="active" onclick="showTab('dash')">📊 Dashboard</button>
+      <button id="nt-sess" onclick="showTab('sess')">🤖 Sessions</button>
+      <button id="nt-admin" class="hidden" onclick="showTab('admin')">🛡️ Admin</button>
+    </div>
+    <div class="user-chip"><span class="chip" id="userChip">user</span><button class="btn btn-ghost btn-sm" onclick="logout()">Logout</button></div>
+  </nav>
+  <main>
+    <section id="tab-dash">
+      <div class="stats">
+        <div class="stat glass"><div class="n" id="stUptime">—</div><div class="l">⏱ Server Uptime</div></div>
+        <div class="stat glass"><div class="n" id="stSessions">0</div><div class="l">🤖 Sessions</div></div>
+        <div class="stat glass"><div class="n" id="stMsgs">0</div><div class="l">📨 Messages Sent</div></div>
+        <div class="stat glass"><div class="n" id="stMedia">0</div><div class="l">🖼 Media Files</div></div>
+      </div>
+      <div class="card glass">
+        <h2>🚀 Create New Session</h2>
+        <p class="sub">Creds.json upload karein aur sending session shuru karein</p>
+        <form id="createForm" onsubmit="createSession(event)">
+          <div class="form-grid">
+            <div><label>Session Type</label>
+              <select id="cType" onchange="toggleMedia()">
+                <option value="message">💬 Text Message</option>
+                <option value="image">🖼 Image + Caption</option>
+                <option value="sticker">🎭 Sticker</option>
+                <option value="video">🎬 Video + Caption</option>
+              </select></div>
+            <div><label>Target Type</label>
+              <select id="cTargetType">
+                <option value="contacts">📱 Contacts (numbers)</option>
+                <option value="gc">👥 Group (group ID)</option>
+              </select></div>
+            <div class="full"><label>Target IDs (comma/new line separated)</label>
+              <textarea id="cTargets" rows="2" placeholder="923001234567, 923007654321" required></textarea></div>
+            <div><label>Prefix Name</label><input id="cPrefix" placeholder="Bot"></div>
+            <div><label>Delay (seconds)</label><input id="cDelay" type="number" min="1" value="5"></div>
+            <div><label>creds.json (WhatsApp auth) *</label><input id="cCreds" type="file" accept=".json" required></div>
+            <div><label>Messages .txt file</label><input id="cMsgFile" type="file" accept=".txt"></div>
+            <div class="full hidden" id="mediaWrap"><label>Media Files (images/stickers/videos — max 100)</label>
+              <input id="cMedia" type="file" multiple accept="image/*,video/*,.webp"></div>
+          </div>
+          <button class="btn btn-block" id="createBtn" type="submit">⚡ Start Session</button>
+        </form>
+      </div>
+    </section>
+    <section id="tab-sess" class="hidden">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h2>🤖 Active Sessions</h2>
+        <button class="btn btn-ghost btn-sm" onclick="loadSessions()">🔄 Refresh</button>
+      </div>
+      <div id="sessList" class="sess-grid"></div>
+    </section>
+    <section id="tab-admin" class="hidden">
+      <div class="admin-grid">
+        <div class="card glass">
+          <h2>🐙 GitHub Approval System</h2>
+          <p class="sub">GitHub ki approval.txt ka <b>raw URL</b>. Server har 60 sec mein keys auto-sync karta hai. (Default link new1.js mein bhi set kar sakte hain)</p>
+          <label>Raw GitHub URL</label>
+          <input id="ghUrl" placeholder="https://raw.githubusercontent.com/USER/REPO/main/approval.txt">
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button class="btn btn-sm" style="flex:1" onclick="saveGhUrl()">💾 Save & Sync</button>
+            <button class="btn btn-ghost btn-sm" style="flex:1" onclick="syncGh()">🔄 Sync Now</button>
+          </div>
+          <div id="ghStatus" style="margin-top:14px;font-size:12px;color:var(--muted)"></div>
+        </div>
+        <div class="card glass">
+          <h2>🔑 Local Approval Keys</h2>
+          <p class="sub">Ye keys server ki local approval.txt mein save hoti hain</p>
+          <div style="display:flex;gap:8px">
+            <input id="newKey" placeholder="Paste approval key..." style="flex:1">
+            <button class="btn btn-sm" onclick="addKey()">➕ Add</button>
+          </div>
+          <div class="key-list" id="keyList"></div>
+          <div style="margin-top:14px;padding:12px;background:rgba(0,0,0,.3);border-radius:10px;font-size:12px" id="adminStats"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="logsModal" class="modal hidden" onclick="if(event.target===this)closeLogs()">
+  <div class="modal-box glass">
+    <div class="modal-head">
+      <h3 style="font-size:15px">📜 Session Logs — <span id="logsTitle" style="color:#c4b5fd"></span></h3>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm" onclick="refreshLogs()">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="closeLogs()">✕</button>
+      </div>
+    </div>
+    <pre id="logsBody">Loading...</pre>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let S={user:localStorage.getItem('wa_user')||'',role:localStorage.getItem('wa_role')||'',key:localStorage.getItem('wa_key')||''};
+let authMode='login',pollTimer=null,waitTimer=null,currentLogsId=null;
+async function api(url,body={},isForm=false){
+  try{
+    const opts=isForm?{method:'POST',body}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)};
+    const r=await fetch(url,opts);return await r.json();
+  }catch(e){return{ok:false,error:'Network error: '+e.message}}
+}
+function toast(msg,type='info'){
+  const d=document.createElement('div');d.className='t '+type;d.textContent=msg;
+  $('toast').appendChild(d);setTimeout(()=>d.remove(),4200);
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+async function genKey(){
+  const r=await api('/api/generate-approval-key',{userAgent:navigator.userAgent,language:navigator.language,platform:navigator.platform||'web',screenResolution:screen.width+'x'+screen.height,timezone:Intl.DateTimeFormat().resolvedOptions().timeZone});
+  if(r.ok){S.key=r.approvalKey;localStorage.setItem('wa_key',S.key);}
+  return r.ok;
+}
+async function isApproved(){
+  if(!S.key)return false;
+  const r=await api('/api/check-approval',{approvalKey:S.key});
+  return r.ok&&r.approved;
+}
+function renderKeyUI(approved){
+  $('authKey').textContent=S.key||'—';
+  const st=$('authKeyStatus');
+  if(approved){st.textContent='✅ Key Approved — You can login!';st.className='st ok';}
+  else{st.textContent='❌ Not approved yet — send this key to admin';st.className='st no';}
+  $('waitKey').textContent=S.key||'—';
+}
+function copyKey(){navigator.clipboard?.writeText(S.key).then(()=>toast('📋 Key copied!','ok')).catch(()=>toast('Copy failed','err'));}
+async function regenKey(){await genKey();renderKeyUI(await isApproved());toast('🔄 New key generated','info');}
+async function boot(){
+  if(!S.key)await genKey();
+  const approved=await isApproved();
+  renderKeyUI(approved);
+  if(S.user&&approved)enterApp();
+  else if(S.user&&!approved)showWaiting();
+  else showScreen('authScreen');
+}
+function showScreen(id){['authScreen','waitingScreen','appScreen'].forEach(x=>$(x).classList.add('hidden'));$(id).classList.remove('hidden');}
+function showWaiting(){showScreen('waitingScreen');clearInterval(waitTimer);waitTimer=setInterval(checkApprovalRoute,10000);}
+async function checkApprovalRoute(){
+  $('waitStatus').textContent='Checking...';
+  if(await isApproved()){clearInterval(waitTimer);toast('✅ Key approved! Welcome '+S.user,'ok');enterApp();}
+  else $('waitStatus').textContent='❌ Still not approved... auto-checking every 10s';
+}
+function enterApp(){
+  clearInterval(waitTimer);showScreen('appScreen');
+  $('userChip').textContent='👤 '+S.user+(S.role==='admin'?' • ADMIN':'');
+  if(S.role==='admin'||S.user==='SAHIL123')$('nt-admin').classList.remove('hidden');
+  loadStats();loadSessions();
+  clearInterval(pollTimer);pollTimer=setInterval(()=>{loadStats();loadSessions();},5000);
+}
+function logout(){
+  localStorage.removeItem('wa_user');localStorage.removeItem('wa_role');S.user='';S.role='';
+  clearInterval(pollTimer);location.reload();
+}
+function switchAuth(m){
+  authMode=m;
+  $('tabLogin').classList.toggle('active',m==='login');
+  $('tabSignup').classList.toggle('active',m==='signup');
+  $('authBtn').textContent=m==='login'?'🚀 Login':'✨ Create Account';
+}
+async function doAuth(e){
+  e.preventDefault();
+  const u=$('aUser').value.trim(),p=$('aPass').value;
+  if(!S.key){toast('Approval key missing, generating...','err');await genKey();return;}
+  $('authBtn').disabled=true;
+  const r=await api(authMode==='login'?'/api/login':'/api/signup',{username:u,password:p,approvalKey:S.key});
+  $('authBtn').disabled=false;
+  if(!r.ok)return toast(r.error||'Failed','err');
+  if(authMode==='signup'){toast('✅ Account created! Ab login karein','ok');switchAuth('login');return;}
+  S.user=r.username;S.role=r.role;
+  localStorage.setItem('wa_user',S.user);localStorage.setItem('wa_role',S.role);
+  toast('✅ Welcome '+S.user+'!','ok');enterApp();
+}
+function showTab(t){
+  ['dash','sess','admin'].forEach(x=>{$('tab-'+x).classList.add('hidden');$('nt-'+x).classList.remove('active');});
+  $('tab-'+t).classList.remove('hidden');$('nt-'+t).classList.add('active');
+  if(t==='sess')loadSessions();
+  if(t==='admin')loadAdmin();
+}
+function toggleMedia(){$('mediaWrap').classList.toggle('hidden',$('cType').value==='message');}
+async function createSession(e){
+  e.preventDefault();
+  const fd=new FormData();
+  fd.append('sessionType',$('cType').value);
+  fd.append('type',$('cTargetType').value);
+  fd.append('targetID',$('cTargets').value);
+  fd.append('name',$('cPrefix').value||'Bot');
+  fd.append('delayTime',$('cDelay').value||'5');
+  fd.append('username',S.user);
+  fd.append('approvalKey',S.key);
+  const cr=$('cCreds').files[0];if(cr)fd.append('creds',cr);
+  const mf=$('cMsgFile').files[0];if(mf)fd.append('messageFile',mf);
+  for(const f of $('cMedia').files)fd.append('mediaFiles',f);
+  $('createBtn').disabled=true;$('createBtn').textContent='⏳ Creating...';
+  const r=await api('/send-message',fd,true);
+  $('createBtn').disabled=false;$('createBtn').textContent='⚡ Start Session';
+  if(r.ok){toast('✅ Session created: '+r.sessionId,'ok');$('createForm').reset();toggleMedia();showTab('sess');}
+  else toast(r.error||'Failed to create session','err');
+}
+async function loadSessions(){
+  if(!S.user)return;
+  const r=await api('/api/sessions',{username:S.user,role:S.role});
+  if(!r.ok)return;
+  const list=$('sessList');
+  if(!r.sessions.length){list.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="e">🤖</div><p>Koi active session nahi hai. Dashboard se naya session banayein!</p></div>';return;}
+  list.innerHTML=r.sessions.map(s=>{
+    const typeBadge={message:'💬',image:'🖼',sticker:'🎭',video:'🎬'}[s.sessionType]||'💬';
+    return `<div class="sess glass">
+      <div class="top"><div class="id">${esc(s.sessionId)}</div>
+        <div style="display:flex;gap:5px">
+          <span class="badge c">${typeBadge} ${esc(s.sessionType)}</span>
+          ${s.paused?'<span class="badge y">⏸ Paused</span>':'<span class="badge g">▶ Running</span>'}
+        </div></div>
+      <div class="meta">
+        <div>👤 Owner: <b>${esc(s.username)}</b></div>
+        <div>🎯 Target: <b>${esc(s.target)}</b></div>
+        <div>📨 Sent: <b>${s.messagesSent||0}</b></div>
+        <div>🖼 Media: <b>${s.mediaCount||0}</b></div>
+        <div>⏱ Uptime: <b>${esc(s.uptime)}</b></div>
+        <div>⚡ Delay: <b>${Math.round(s.delayMs/1000)}s</b></div>
+      </div>
+      <div class="acts">
+        ${s.paused?`<button class="btn btn-sm" onclick="act('${s.sessionId}','resume')">▶ Resume</button>`:`<button class="btn btn-ghost btn-sm" onclick="act('${s.sessionId}','pause')">⏸ Pause</button>`}
+        <button class="btn btn-ghost btn-sm" onclick="act('${s.sessionId}','restart')">🔄</button>
+        <button class="btn btn-ghost btn-sm" onclick="openLogs('${s.sessionId}')">📜 Logs</button>
+        <button class="btn btn-danger btn-sm" onclick="act('${s.sessionId}','stop')">🛑 Stop</button>
+        <button class="btn btn-danger btn-sm" onclick="delSession('${s.sessionId}')">🗑</button>
+      </div></div>`;
+  }).join('');
+}
+async function act(id,action){
+  const urls={pause:`/api/session/${id}/pause`,resume:`/api/session/${id}/resume`,restart:`/api/session/${id}/restart`,stop:`/stop-session/${id}`};
+  const r=await api(urls[action],{username:S.user,role:S.role});
+  toast(r.ok?('✅ '+action+' successful'):('❌ '+(r.error||'failed')),r.ok?'ok':'err');
+  loadSessions();
+}
+async function delSession(id){
+  if(!confirm('Session PERMANENTLY delete hoga? Sure hain?'))return;
+  const r=await api(`/api/session/${id}/delete`,{username:S.user,role:S.role});
+  toast(r.ok?'🗑 Session deleted':'❌ '+(r.error||'failed'),r.ok?'ok':'err');
+  loadSessions();
+}
+async function loadStats(){
+  const [st,up]=await Promise.all([
+    api('/api/stats',{username:S.user,role:S.role}),
+    fetch('/api/uptime').then(r=>r.json()).catch(()=>({}))
+  ]);
+  if(st.ok){$('stSessions').textContent=st.totalSessions;$('stMsgs').textContent=st.totalMessages;$('stMedia').textContent=st.totalMedia;}
+  if(up.ok)$('stUptime').textContent=up.uptimeFormatted||'—';
+}
+function openLogs(id){currentLogsId=id;$('logsTitle').textContent=id;$('logsModal').classList.remove('hidden');refreshLogs();}
+function closeLogs(){$('logsModal').classList.add('hidden');currentLogsId=null;}
+async function refreshLogs(){
+  if(!currentLogsId)return;
+  const r=await api(`/api/logs/${currentLogsId}`,{username:S.user,role:S.role});
+  $('logsBody').textContent=r.ok?(r.logs.length?r.logs.join('\n'):'(no logs yet)'):'Error: '+(r.error||'');
+  $('logsBody').scrollTop=$('logsBody').scrollHeight;
+}
+async function loadAdmin(){
+  const [cfg,keys,tu]=await Promise.all([
+    api('/api/admin/approval-config',{role:S.role}),
+    api('/api/admin/list-approval-keys',{role:S.role}),
+    api('/api/total-users',{role:S.role})
+  ]);
+  if(cfg.ok){
+    $('ghUrl').value=cfg.url||'';
+    $('ghStatus').innerHTML=`🐙 GitHub keys: <b style="color:#4ade80">${cfg.githubKeys}</b> &nbsp;|&nbsp; 📁 Local keys: <b style="color:#67e8f9">${cfg.localKeys}</b><br>🕐 Last sync: <b>${cfg.lastSync?new Date(cfg.lastSync).toLocaleString():'Never'}</b>`;
+  }
+  if(keys.ok){
+    $('keyList').innerHTML=keys.keys.length?keys.keys.map(k=>`<div class="key-row"><span>${esc(k)}</span><button class="btn btn-danger btn-sm" onclick="removeKey('${esc(k)}')">✕</button></div>`).join(''):'<div style="color:var(--muted);font-size:12px;text-align:center;padding:14px">No local keys yet</div>';
+    $('adminStats').innerHTML=`👥 Total Users: <b>${tu.ok?tu.totalUsers:'—'}</b> &nbsp;|&nbsp; 🔑 Local Keys: <b>${keys.total}</b>`;
+  }
+}
+async function saveGhUrl(){
+  const r=await api('/api/admin/set-approval-url',{role:S.role,url:$('ghUrl').value.trim()});
+  toast(r.message||r.error||'Done',r.ok?'ok':'err');loadAdmin();
+}
+async function syncGh(){
+  const r=await api('/api/admin/sync-approvals',{role:S.role});
+  toast(r.synced?`✅ Synced ${r.count} keys from GitHub`:'❌ Sync failed: '+(r.error||r.reason||''),r.synced?'ok':'err');loadAdmin();
+}
+async function addKey(){
+  const k=$('newKey').value.trim();if(!k)return toast('Key required','err');
+  const r=await api('/api/admin/add-approval-key',{role:S.role,key:k});
+  toast(r.message||r.error,r.ok?'ok':'err');if(r.ok)$('newKey').value='';loadAdmin();
+}
+async function removeKey(k){
+  const r=await api('/api/admin/remove-approval-key',{role:S.role,key:k});
+  toast(r.message||r.error,r.ok?'ok':'err');loadAdmin();
+}
+toggleMedia();
+boot();
+</script>
+</body>
+</html>
