@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WALEED KHAN• WA Server</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%2325D366'/%3E%3Cpath fill='white' transform='scale(0.72) translate(4.7 4.7)' d='M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══════════ 💚 WHATSAPP THEME ═══════════ */
+:root{
+  --bg:#0b141a; --panel:#111b21; --card:rgba(32,44,53,.6); --border:rgba(134,150,160,.14);
+  --text:#e9edef; --muted:#8696a0;
+  --acc1:#25D366; --acc2:#00a884; --acc3:#128C7E; --deep:#075E54;
+  --green:#25D366; --red:#f15c6d; --yellow:#ffd27f; --blue:#34B7F1;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{background:var(--bg) radial-gradient(rgba(37,211,102,.045) 1px,transparent 1px);background-size:26px 26px;color:var(--text);min-height:100vh;overflow-x:hidden}
+.bg-blobs{position:fixed;inset:0;z-index:-1;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(95px);opacity:.3;animation:float 14s ease-in-out infinite alternate}
+.b1{width:480px;height:480px;background:#25D366;top:-120px;left:-100px}
+.b2{width:420px;height:420px;background:#075E54;bottom:-140px;right:-80px;animation-delay:-6s}
+.b3{width:300px;height:300px;background:#00a884;top:40%;left:55%;animation-delay:-3s}
+@keyframes float{from{transform:translate(0,0) scale(1)}to{transform:translate(50px,40px) scale(1.15)}}
+.glass{background:var(--card);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--border);border-radius:18px}
+.hidden{display:none!important}
+.screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+
+/* ═══════════ 💚 WHATSAPP LOGO ═══════════ */
+.wa-logo{width:86px;height:86px;border-radius:26px;background:linear-gradient(135deg,#25D366,#128C7E 60%,#075E54);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:0 12px 40px rgba(37,211,102,.45),inset 0 2px 6px rgba(255,255,255,.35);animation:logoPulse 2.6s ease-in-out infinite;position:relative}
+.wa-logo svg{width:50px;height:50px;fill:#fff;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+.wa-logo::after{content:'';position:absolute;inset:-3px;border-radius:29px;border:2px solid rgba(37,211,102,.4);animation:ring 2.6s ease-in-out infinite}
+@keyframes logoPulse{0%,100%{box-shadow:0 12px 40px rgba(37,211,102,.45),inset 0 2px 6px rgba(255,255,255,.35)}50%{box-shadow:0 12px 65px rgba(37,211,102,.75),inset 0 2px 6px rgba(255,255,255,.35)}}
+@keyframes ring{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.8;transform:scale(1.05)}}
+.brand-logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#25D366,#075E54);display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;margin-right:8px;box-shadow:0 4px 14px rgba(37,211,102,.4)}
+.brand-logo svg{width:18px;height:18px;fill:#fff}
+
+/* ═══════════ Auth ═══════════ */
+.auth-card{width:100%;max-width:430px;padding:34px;animation:fadeUp .5s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.logo{text-align:center;margin-bottom:22px}
+.logo h1{font-size:21px;font-weight:800;background:linear-gradient(90deg,#25D366,#00a884);-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo p{color:var(--muted);font-size:12px}
+.tabs{display:flex;gap:8px;background:rgba(0,0,0,.35);padding:5px;border-radius:12px;margin-bottom:18px}
+.tabs button{flex:1;padding:10px;border:none;border-radius:9px;background:transparent;color:var(--muted);font-weight:600;cursor:pointer;transition:.25s;font-size:13px}
+.tabs button.active{background:linear-gradient(90deg,#25D366,#00a884);color:#fff;box-shadow:0 4px 16px rgba(37,211,102,.35)}
+label{display:block;font-size:12px;color:var(--muted);margin:12px 0 5px;font-weight:500}
+input,select,textarea{width:100%;padding:12px 14px;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:11px;color:var(--text);font-size:14px;outline:none;transition:.25s;font-family:inherit}
+input:focus,select:focus,textarea:focus{border-color:var(--acc2);box-shadow:0 0 0 3px rgba(0,168,132,.18)}
+input[type=file]{padding:9px;font-size:12px;cursor:pointer}
+input[type=file]::file-selector-button{background:linear-gradient(90deg,#25D366,#00a884);border:none;color:#fff;padding:7px 14px;border-radius:8px;cursor:pointer;font-weight:600;margin-right:10px;font-size:11px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 20px;border:none;border-radius:11px;background:linear-gradient(90deg,#25D366,#00a884);color:#fff;font-weight:600;cursor:pointer;transition:.25s;font-size:14px;font-family:inherit}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(37,211,102,.4)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-block{width:100%;margin-top:18px}
+.btn-ghost{background:rgba(255,255,255,.06);border:1px solid var(--border)}
+.btn-ghost:hover{box-shadow:none;border-color:var(--acc2)}
+.btn-danger{background:linear-gradient(90deg,#e5484d,#f15c6d)}
+.btn-sm{padding:7px 13px;font-size:12px;border-radius:9px}
+.key-box{margin-top:18px;padding:14px;background:rgba(0,0,0,.35);border:1px dashed rgba(37,211,102,.35);border-radius:12px;text-align:center}
+.key-box .k{font-size:17px;font-weight:700;letter-spacing:2px;color:#25D366;word-break:break-all}
+.key-box .st{font-size:11px;margin-top:6px;font-weight:600}
+.st.ok{color:var(--green)}.st.no{color:var(--red)}.st.wait{color:var(--yellow)}
+
+/* ═══════════ App ═══════════ */
+#appScreen{display:block;min-height:100vh;padding:0}
+nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 24px;background:rgba(17,27,33,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.brand{font-weight:800;font-size:16px;display:flex;align-items:center;white-space:nowrap}
+.brand span.btxt{background:linear-gradient(90deg,#25D366,#00a884);-webkit-background-clip:text;background-clip:text;color:transparent}
+.nav-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.nav-tabs button{padding:8px 16px;border:none;border-radius:9px;background:transparent;color:var(--muted);font-weight:600;cursor:pointer;font-size:13px;transition:.2s;font-family:inherit}
+.nav-tabs button.active{background:rgba(37,211,102,.16);color:#25D366;border:1px solid rgba(37,211,102,.4)}
+.user-chip{display:flex;align-items:center;gap:10px;font-size:13px}
+.chip{padding:6px 13px;border-radius:20px;background:rgba(0,168,132,.14);border:1px solid rgba(0,168,132,.4);color:#7de8c8;font-weight:600;font-size:12px}
+main{max-width:1200px;margin:0 auto;padding:26px 22px 70px}
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px}
+.stat{padding:18px;position:relative;overflow:hidden;animation:fadeUp .4s ease}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#25D366,#075E54)}
+.stat .n{font-size:26px;font-weight:800;color:#e9edef}
+.stat .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+/* Form grid */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+.form-grid .full{grid-column:1/-1}
+.card{padding:24px;margin-bottom:22px}
+.card h2{font-size:16px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.card .sub{font-size:12px;color:var(--muted);margin-bottom:14px}
+/* Sessions */
+.sess-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.sess{padding:18px;animation:fadeUp .35s ease;transition:.25s}
+.sess:hover{transform:translateY(-3px);border-color:rgba(37,211,102,.5);box-shadow:0 12px 30px rgba(0,0,0,.35)}
+.sess .top{display:flex;justify-content:space-between;align-items:start;margin-bottom:10px;gap:8px}
+.sess .id{font-size:12px;font-weight:700;color:#7de8c8;word-break:break-all}
+.badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.badge.g{background:rgba(37,211,102,.14);color:#25D366;border:1px solid rgba(37,211,102,.4)}
+.badge.r{background:rgba(241,92,109,.14);color:#f15c6d;border:1px solid rgba(241,92,109,.4)}
+.badge.y{background:rgba(255,210,127,.12);color:#ffd27f;border:1px solid rgba(255,210,127,.35)}
+.badge.c{background:rgba(52,183,241,.12);color:#34B7F1;border:1px solid rgba(52,183,241,.35)}
+.sess .meta{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;color:var(--muted);margin-bottom:12px}
+.sess .meta b{color:var(--text);font-weight:600}
+.sess .acts{display:flex;gap:6px;flex-wrap:wrap}
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty .e{font-size:52px;margin-bottom:12px}
+/* Admin */
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.key-list{max-height:220px;overflow-y:auto;margin-top:12px;display:flex;flex-direction:column;gap:6px}
+.key-row{display:flex;justify-content:space-between;align-items:center;padding:9px 13px;background:rgba(0,0,0,.3);border-radius:9px;font-size:12px;font-family:monospace}
+/* Modal */
+.modal{position:fixed;inset:0;background:rgba(11,20,26,.8);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
+.modal-box{width:100%;max-width:720px;max-height:82vh;padding:22px;display:flex;flex-direction:column}
+.modal-box pre{flex:1;overflow:auto;background:rgba(0,0,0,.5);border-radius:12px;padding:14px;font-size:11px;line-height:1.7;color:#a5f3c8;white-space:pre-wrap;word-break:break-word;margin-top:12px}
+.modal-head{display:flex;justify-content:space-between;align-items:center}
+/* Toast */
+#toast{position:fixed;bottom:24px;right:24px;z-index:200;display:flex;flex-direction:column;gap:8px}
+.t{padding:13px 20px;border-radius:12px;font-size:13px;font-weight:600;animation:slideIn .3s ease;backdrop-filter:blur(12px);border:1px solid var(--border);max-width:340px}
+.t.ok{background:rgba(0,168,132,.95);color:#fff}
+.t.err{background:rgba(229,72,77,.95);color:#fff}
+.t.info{background:rgba(32,44,53,.97);color:var(--text)}
+@keyframes slideIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+.pulse{animation:pulse 1.6s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:rgba(0,168,132,.55);border-radius:8px}::-webkit-scrollbar-track{background:transparent}
+@media(max-width:720px){.form-grid,.admin-grid{grid-template-columns:1fr}nav{justify-content:center}}
+</style>
+</head>
+<body>
+<div class="bg-blobs"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div id="toast"></div>
+
+<!-- ══════════ AUTH SCREEN ══════════ -->
+<div id="authScreen" class="screen">
+  <div class="auth-card glass">
+    <div class="logo">
+      <div class="wa-logo">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      </div>
+      <h1>WALEED KHAN SERVER</h1>
+      <p>WhatsApp Automation Panel v2.0</p>
+    </div>
+    <div class="tabs">
+      <button id="tabLogin" class="active" onclick="switchAuth('login')">🔑 Login</button>
+      <button id="tabSignup" onclick="switchAuth('signup')">✨ Sign Up</button>
+    </div>
+    <form id="authForm" onsubmit="doAuth(event)">
+      <label>Username</label>
+      <input id="aUser" required autocomplete="username" placeholder="Your username">
+      <label>Password</label>
+      <input id="aPass" type="password" required autocomplete="current-password" placeholder="••••••••">
+      <button class="btn btn-block" id="authBtn" type="submit">🚀 Login</button>
+    </form>
+    <div class="key-box">
+      <div style="font-size:11px;color:var(--muted)">🔐 YOUR DEVICE APPROVAL KEY</div>
+      <div class="k" id="authKey">Generating...</div>
+      <div class="st wait" id="authKeyStatus">⏳ Checking...</div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn btn-ghost btn-sm" style="flex:1" onclick="copyKey()">📋 Copy Key</button>
+        <button class="btn btn-ghost btn-sm" style="flex:1" onclick="regenKey()">🔄 New Key</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ WAITING SCREEN ══════════ -->
+<div id="waitingScreen" class="screen hidden">
+  <div class="auth-card glass" style="text-align:center">
+    <div style="position:relative;display:inline-block">
+      <div class="wa-logo" style="width:94px;height:94px">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      </div>
+      <div class="pulse" style="position:absolute;bottom:-8px;right:-8px;font-size:28px">⏳</div>
+    </div>
+    <h2 style="margin:14px 0 6px">Waiting For Approval</h2>
+    <p style="font-size:13px;color:var(--muted)">Aapki key abhi approved nahi hai. Ye key admin ko bhejein — jab wo GitHub ki <b>approval.txt</b> mein add kar denge, aap khud-ba-khud login ho jayenge.</p>
+    <div class="key-box">
+      <div class="k" id="waitKey">—</div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="copyKey()">📋 Copy Key</button>
+    </div>
+    <button class="btn btn-block" onclick="checkApprovalRoute()">🔁 Check Approval Now</button>
+    <button class="btn btn-ghost btn-block" onclick="logout()">↩ Logout</button>
+    <p id="waitStatus" style="font-size:11px;color:var(--muted);margin-top:12px" class="pulse">Auto-checking every 10 seconds...</p>
+  </div>
+</div>
+
+<!-- ══════════ MAIN APP ══════════ -->
+<div id="appScreen" class="hidden">
+  <nav>
+    <div class="brand">
+      <span class="brand-logo"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></span>
+      <span class="btxt">DK WA SERVER</span>
+    </div>
+    <div class="nav-tabs">
+      <button id="nt-dash" class="active" onclick="showTab('dash')">📊 Dashboard</button>
+      <button id="nt-sess" onclick="showTab('sess')">🤖 Sessions</button>
+      <button id="nt-admin" class="hidden" onclick="showTab('admin')">🛡️ Admin</button>
+    </div>
+    <div class="user-chip">
+      <span class="chip" id="userChip">user</span>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <main>
+    <!-- DASHBOARD TAB -->
+    <section id="tab-dash">
+      <div class="stats">
+        <div class="stat glass"><div class="n" id="stUptime">—</div><div class="l">⏱ Server Uptime</div></div>
+        <div class="stat glass"><div class="n" id="stSessions">0</div><div class="l">🤖 Sessions</div></div>
+        <div class="stat glass"><div class="n" id="stMsgs">0</div><div class="l">📨 Messages Sent</div></div>
+        <div class="stat glass"><div class="n" id="stMedia">0</div><div class="l">🖼 Media Files</div></div>
+      </div>
+
+      <div class="card glass">
+        <h2>🚀 Create New Session</h2>
+        <p class="sub">Creds.json upload karein aur sending session shuru karein</p>
+        <form id="createForm" onsubmit="createSession(event)">
+          <div class="form-grid">
+            <div>
+              <label>Session Type</label>
+              <select id="cType" onchange="toggleMedia()">
+                <option value="message">💬 Text Message</option>
+                <option value="image">🖼 Image + Caption</option>
+                <option value="sticker">🎭 Sticker</option>
+                <option value="video">🎬 Video + Caption</option>
+              </select>
+            </div>
+            <div>
+              <label>Target Type</label>
+              <select id="cTargetType">
+                <option value="contacts">📱 Contacts (numbers)</option>
+                <option value="gc">👥 Group (group ID)</option>
+              </select>
+            </div>
+            <div class="full">
+              <label>Target IDs (comma/new line separated)</label>
+              <textarea id="cTargets" rows="2" placeholder="923001234567, 923007654321" required></textarea>
+            </div>
+            <div>
+              <label>Prefix Name</label>
+              <input id="cPrefix" placeholder="Bot">
+            </div>
+            <div>
+              <label>Delay (seconds)</label>
+              <input id="cDelay" type="number" min="1" value="5">
+            </div>
+            <div>
+              <label>creds.json (WhatsApp auth) *</label>
+              <input id="cCreds" type="file" accept=".json" required>
+            </div>
+            <div>
+              <label>Messages .txt file</label>
+              <input id="cMsgFile" type="file" accept=".txt">
+            </div>
+            <div class="full hidden" id="mediaWrap">
+              <label>Media Files (images/stickers/videos — max 100)</label>
+              <input id="cMedia" type="file" multiple accept="image/*,video/*,.webp">
+            </div>
+          </div>
+          <button class="btn btn-block" id="createBtn" type="submit">⚡ Start Session</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- SESSIONS TAB -->
+    <section id="tab-sess" class="hidden">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h2>🤖 Active Sessions</h2>
+        <button class="btn btn-ghost btn-sm" onclick="loadSessions()">🔄 Refresh</button>
+      </div>
+      <div id="sessList" class="sess-grid"></div>
+    </section>
+
+    <!-- ADMIN TAB -->
+    <section id="tab-admin" class="hidden">
+      <div class="admin-grid">
+        <div class="card glass">
+          <h2>🐙 GitHub Approval System</h2>
+          <p class="sub">GitHub ki approval.txt ka <b>raw URL</b>. Server har 60 sec mein keys auto-sync karta hai. (Default link new1.js mein bhi set kar sakte hain)</p>
+          <label>Raw GitHub URL</label>
+          <input id="ghUrl" placeholder="https://raw.githubusercontent.com/USER/REPO/main/approval.txt">
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button class="btn btn-sm" style="flex:1" onclick="saveGhUrl()">💾 Save & Sync</button>
+            <button class="btn btn-ghost btn-sm" style="flex:1" onclick="syncGh()">🔄 Sync Now</button>
+          </div>
+          <div id="ghStatus" style="margin-top:14px;font-size:12px;color:var(--muted)"></div>
+        </div>
+        <div class="card glass">
+          <h2>🔑 Local Approval Keys</h2>
+          <p class="sub">Ye keys server ki local approval.txt mein save hoti hain</p>
+          <div style="display:flex;gap:8px">
+            <input id="newKey" placeholder="Paste approval key..." style="flex:1">
+            <button class="btn btn-sm" onclick="addKey()">➕ Add</button>
+          </div>
+          <div class="key-list" id="keyList"></div>
+          <div style="margin-top:14px;padding:12px;background:rgba(0,0,0,.3);border-radius:10px;font-size:12px" id="adminStats"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ══════════ LOGS MODAL ══════════ -->
+<div id="logsModal" class="modal hidden" onclick="if(event.target===this)closeLogs()">
+  <div class="modal-box glass">
+    <div class="modal-head">
+      <h3 style="font-size:15px">📜 Session Logs — <span id="logsTitle" style="color:#25D366"></span></h3>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm" onclick="refreshLogs()">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="closeLogs()">✕</button>
+      </div>
+    </div>
+    <pre id="logsBody">Loading...</pre>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let S={user:localStorage.getItem('wa_user')||'',role:localStorage.getItem('wa_role')||'',key:localStorage.getItem('wa_key')||''};
+let authMode='login',pollTimer=null,waitTimer=null,currentLogsId=null;
+
+/* ---------- helpers ---------- */
+async function api(url,body={},isForm=false){
+  try{
+    const opts=isForm?{method:'POST',body}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)};
+    const r=await fetch(url,opts);return await r.json();
+  }catch(e){return{ok:false,error:'Network error: '+e.message}}
+}
+function toast(msg,type='info'){
+  const d=document.createElement('div');d.className='t '+type;d.textContent=msg;
+  $('toast').appendChild(d);setTimeout(()=>d.remove(),4200);
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+/* ---------- approval key ---------- */
+async function genKey(){
+  const r=await api('/api/generate-approval-key',{userAgent:navigator.userAgent,language:navigator.language,platform:navigator.platform||'web',screenResolution:screen.width+'x'+screen.height,timezone:Intl.DateTimeFormat().resolvedOptions().timeZone});
+  if(r.ok){S.key=r.approvalKey;localStorage.setItem('wa_key',S.key);}
+  return r.ok;
+}
+async function isApproved(){
+  if(!S.key)return false;
+  const r=await api('/api/check-approval',{approvalKey:S.key});
+  return r.ok&&r.approved;
+}
+function renderKeyUI(approved){
+  $('authKey').textContent=S.key||'—';
+  const st=$('authKeyStatus');
+  if(approved){st.textContent='✅ Key Approved — You can login!';st.className='st ok';}
+  else{st.textContent='❌ Not approved yet — send this key to admin';st.className='st no';}
+  $('waitKey').textContent=S.key||'—';
+}
+function copyKey(){navigator.clipboard?.writeText(S.key).then(()=>toast('📋 Key copied!','ok')).catch(()=>toast('Copy failed','err'));}
+async function regenKey(){await genKey();renderKeyUI(await isApproved());toast('🔄 New key generated','info');}
+
+/* ---------- boot / routing ---------- */
+async function boot(){
+  if(!S.key)await genKey();
+  const approved=await isApproved();
+  renderKeyUI(approved);
+  if(S.user&&approved)enterApp();
+  else if(S.user&&!approved)showWaiting();
+  else showScreen('authScreen');
+}
+function showScreen(id){['authScreen','waitingScreen','appScreen'].forEach(x=>$(x).classList.add('hidden'));$(id).classList.remove('hidden');}
+function showWaiting(){showScreen('waitingScreen');clearInterval(waitTimer);waitTimer=setInterval(checkApprovalRoute,10000);}
+async function checkApprovalRoute(){
+  $('waitStatus').textContent='Checking...';
+  if(await isApproved()){clearInterval(waitTimer);toast('✅ Key approved! Welcome '+S.user,'ok');enterApp();}
+  else $('waitStatus').textContent='❌ Still not approved... auto-checking every 10s';
+}
+function enterApp(){
+  clearInterval(waitTimer);showScreen('appScreen');
+  $('userChip').textContent='👤 '+S.user+(S.role==='admin'?' • ADMIN':'');
+  if(S.role==='admin'||S.user==='SAHIL123')$('nt-admin').classList.remove('hidden');
+  loadStats();loadSessions();
+  clearInterval(pollTimer);pollTimer=setInterval(()=>{loadStats();loadSessions();},5000);
+}
+function logout(){
+  localStorage.removeItem('wa_user');localStorage.removeItem('wa_role');S.user='';S.role='';
+  clearInterval(pollTimer);location.reload();
+}
+
+/* ---------- auth ---------- */
+function switchAuth(m){
+  authMode=m;
+  $('tabLogin').classList.toggle('active',m==='login');
+  $('tabSignup').classList.toggle('active',m==='signup');
+  $('authBtn').textContent=m==='login'?'🚀 Login':'✨ Create Account';
+}
+async function doAuth(e){
+  e.preventDefault();
+  const u=$('aUser').value.trim(),p=$('aPass').value;
+  if(!S.key){toast('Approval key missing, generating...','err');await genKey();return;}
+  $('authBtn').disabled=true;
+  const r=await api(authMode==='login'?'/api/login':'/api/signup',{username:u,password:p,approvalKey:S.key});
+  $('authBtn').disabled=false;
+  if(!r.ok)return toast(r.error||'Failed','err');
+  if(authMode==='signup'){toast('✅ Account created! Ab login karein','ok');switchAuth('login');return;}
+  S.user=r.username;S.role=r.role;
+  localStorage.setItem('wa_user',S.user);localStorage.setItem('wa_role',S.role);
+  toast('✅ Welcome '+S.user+'!','ok');enterApp();
+}
+
+/* ---------- tabs ---------- */
+function showTab(t){
+  ['dash','sess','admin'].forEach(x=>{$('tab-'+x).classList.add('hidden');$('nt-'+x).classList.remove('active');});
+  $('tab-'+t).classList.remove('hidden');$('nt-'+t).classList.add('active');
+  if(t==='sess')loadSessions();
+  if(t==='admin')loadAdmin();
+}
+
+/* ---------- create session ---------- */
+function toggleMedia(){
+  const t=$('cType').value;
+  $('mediaWrap').classList.toggle('hidden',t==='message');
+}
+async function createSession(e){
+  e.preventDefault();
+  const fd=new FormData();
+  fd.append('sessionType',$('cType').value);
+  fd.append('type',$('cTargetType').value);
+  fd.append('targetID',$('cTargets').value);
+  fd.append('name',$('cPrefix').value||'Bot');
+  fd.append('delayTime',$('cDelay').value||'5');
+  fd.append('username',S.user);
+  fd.append('approvalKey',S.key);
+  const cr=$('cCreds').files[0];if(cr)fd.append('creds',cr);
+  const mf=$('cMsgFile').files[0];if(mf)fd.append('messageFile',mf);
+  for(const f of $('cMedia').files)fd.append('mediaFiles',f);
+  $('createBtn').disabled=true;$('createBtn').textContent='⏳ Creating...';
+  const r=await api('/send-message',fd,true);
+  $('createBtn').disabled=false;$('createBtn').textContent='⚡ Start Session';
+  if(r.ok){toast('✅ Session created: '+r.sessionId,'ok');$('createForm').reset();toggleMedia();showTab('sess');}
+  else toast(r.error||'Failed to create session','err');
+}
+
+/* ---------- sessions ---------- */
+async function loadSessions(){
+  if(!S.user)return;
+  const r=await api('/api/sessions',{username:S.user,role:S.role});
+  if(!r.ok)return;
+  const list=$('sessList');
+  if(!r.sessions.length){list.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="e">🤖</div><p>Koi active session nahi hai. Dashboard se naya session banayein!</p></div>';return;}
+  list.innerHTML=r.sessions.map(s=>{
+    const typeBadge={message:'💬',image:'🖼',sticker:'🎭',video:'🎬'}[s.sessionType]||'💬';
+    return `<div class="sess glass">
+      <div class="top">
+        <div class="id">${esc(s.sessionId)}</div>
+        <div style="display:flex;gap:5px">
+          <span class="badge c">${typeBadge} ${esc(s.sessionType)}</span>
+          ${s.paused?'<span class="badge y">⏸ Paused</span>':'<span class="badge g">▶ Running</span>'}
+        </div>
+      </div>
+      <div class="meta">
+        <div>👤 Owner: <b>${esc(s.username)}</b></div>
+        <div>🎯 Target: <b>${esc(s.target)}</b></div>
+        <div>📨 Sent: <b>${s.messagesSent||0}</b></div>
+        <div>🖼 Media: <b>${s.mediaCount||0}</b></div>
+        <div>⏱ Uptime: <b>${esc(s.uptime)}</b></div>
+        <div>⚡ Delay: <b>${Math.round(s.delayMs/1000)}s</b></div>
+      </div>
+      <div class="acts">
+        ${s.paused
+          ?`<button class="btn btn-sm" onclick="act('${s.sessionId}','resume')">▶ Resume</button>`
+          :`<button class="btn btn-ghost btn-sm" onclick="act('${s.sessionId}','pause')">⏸ Pause</button>`}
+        <button class="btn btn-ghost btn-sm" onclick="act('${s.sessionId}','restart')">🔄</button>
+        <button class="btn btn-ghost btn-sm" onclick="openLogs('${s.sessionId}')">📜 Logs</button>
+        <button class="btn btn-danger btn-sm" onclick="act('${s.sessionId}','stop')">🛑 Stop</button>
+        <button class="btn btn-danger btn-sm" onclick="delSession('${s.sessionId}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+async function act(id,action){
+  const urls={pause:`/api/session/${id}/pause`,resume:`/api/session/${id}/resume`,restart:`/api/session/${id}/restart`,stop:`/stop-session/${id}`};
+  const r=await api(urls[action],{username:S.user,role:S.role});
+  toast(r.ok?('✅ '+action+' successful'):('❌ '+(r.error||'failed')),r.ok?'ok':'err');
+  loadSessions();
+}
+async function delSession(id){
+  if(!confirm('Session PERMANENTLY delete hoga? Sure hain?'))return;
+  const r=await api(`/api/session/${id}/delete`,{username:S.user,role:S.role});
+  toast(r.ok?'🗑 Session deleted':'❌ '+(r.error||'failed'),r.ok?'ok':'err');
+  loadSessions();
+}
+
+/* ---------- stats ---------- */
+async function loadStats(){
+  const [st,up]=await Promise.all([
+    api('/api/stats',{username:S.user,role:S.role}),
+    fetch('/api/uptime').then(r=>r.json()).catch(()=>({}))
+  ]);
+  if(st.ok){$('stSessions').textContent=st.totalSessions;$('stMsgs').textContent=st.totalMessages;$('stMedia').textContent=st.totalMedia;}
+  if(up.ok)$('stUptime').textContent=up.uptimeFormatted||'—';
+}
+
+/* ---------- logs ---------- */
+function openLogs(id){currentLogsId=id;$('logsTitle').textContent=id;$('logsModal').classList.remove('hidden');refreshLogs();}
+function closeLogs(){$('logsModal').classList.add('hidden');currentLogsId=null;}
+async function refreshLogs(){
+  if(!currentLogsId)return;
+  const r=await api(`/api/logs/${currentLogsId}`,{username:S.user,role:S.role});
+  $('logsBody').textContent=r.ok?(r.logs.length?r.logs.join('\n'):'(no logs yet)'):'Error: '+(r.error||'');
+  $('logsBody').scrollTop=$('logsBody').scrollHeight;
+}
+
+/* ---------- admin ---------- */
+async function loadAdmin(){
+  const [cfg,keys,tu]=await Promise.all([
+    api('/api/admin/approval-config',{role:S.role}),
+    api('/api/admin/list-approval-keys',{role:S.role}),
+    api('/api/total-users',{role:S.role})
+  ]);
+  if(cfg.ok){
+    $('ghUrl').value=cfg.url||'';
+    $('ghStatus').innerHTML=`🐙 GitHub keys: <b style="color:#25D366">${cfg.githubKeys}</b> &nbsp;|&nbsp; 📁 Local keys: <b style="color:#34B7F1">${cfg.localKeys}</b><br>🕐 Last sync: <b>${cfg.lastSync?new Date(cfg.lastSync).toLocaleString():'Never'}</b>`;
+  }
+  if(keys.ok){
+    $('keyList').innerHTML=keys.keys.length?keys.keys.map(k=>`<div class="key-row"><span>${esc(k)}</span><button class="btn btn-danger btn-sm" onclick="removeKey('${esc(k)}')">✕</button></div>`).join(''):'<div style="color:var(--muted);font-size:12px;text-align:center;padding:14px">No local keys yet</div>';
+    $('adminStats').innerHTML=`👥 Total Users: <b>${tu.ok?tu.totalUsers:'—'}</b> &nbsp;|&nbsp; 🔑 Local Keys: <b>${keys.total}</b>`;
+  }
+}
+async function saveGhUrl(){
+  const r=await api('/api/admin/set-approval-url',{role:S.role,url:$('ghUrl').value.trim()});
+  toast(r.message||r.error||'Done',r.ok?'ok':'err');loadAdmin();
+}
+async function syncGh(){
+  const r=await api('/api/admin/sync-approvals',{role:S.role});
+  toast(r.synced?`✅ Synced ${r.count} keys from GitHub`:'❌ Sync failed: '+(r.error||r.reason||''),r.synced?'ok':'err');loadAdmin();
+}
+async function addKey(){
+  const k=$('newKey').value.trim();if(!k)return toast('Key required','err');
+  const r=await api('/api/admin/add-approval-key',{role:S.role,key:k});
+  toast(r.message||r.error,r.ok?'ok':'err');if(r.ok)$('newKey').value='';loadAdmin();
+}
+async function removeKey(k){
+  const r=await api('/api/admin/remove-approval-key',{role:S.role,key:k});
+  toast(r.message||r.error,r.ok?'ok':'err');loadAdmin();
+}
+
+/* ---------- start ---------- */
+toggleMedia();
+boot();
+</script>
+</body>
+</html>
