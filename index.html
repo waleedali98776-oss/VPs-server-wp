@@ -4,427 +4,465 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>WALEED KHAN • WhatsApp Server</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💬</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+/* ============ RESET & BASE ============ */
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --deep:#075e54; --teal:#128c7e; --green:#25d366; --newteal:#00a884;
-  --bg:#0b141a; --panel:#111b21; --panel2:#202c33; --line:rgba(134,150,160,.15);
-  --hover:#202c33; --active:#2a3942;
-  --text:#e9edef; --muted:#8696a0;
-  --bub-out:#005c4b; --bub-in:#202c33; --tick:#53bdeb;
+  --bg:#050c0a;
+  --glass:rgba(16,28,24,.62);
+  --glass2:rgba(255,255,255,.045);
+  --line:rgba(255,255,255,.09);
+  --green:#25d366; --teal:#00a884; --deep:#128c7e; --mint:#7ef0b2;
+  --text:#eafff3; --muted:#8fa5a0; --dim:#5d726d;
+  --red:#ff6b7a; --amber:#ffc861;
+  --mono:'JetBrains Mono',Consolas,monospace;
+  --r:20px;
 }
-html,body{height:100%}
+html{scroll-behavior:smooth}
 body{
-  font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;
-  background:var(--bg);color:var(--text);overflow:hidden;
+  font-family:'Poppins',system-ui,-apple-system,'Segoe UI',sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh;
+  overflow-x:hidden;position:relative;
 }
 .hidden{display:none!important}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
-::-webkit-scrollbar{width:6px;height:6px}
-::-webkit-scrollbar-thumb{background:rgba(134,150,160,.3);border-radius:3px}
-::selection{background:rgba(0,168,132,.4)}
-a{color:inherit}
+input,select,textarea{font-family:inherit}
+::selection{background:rgba(37,211,102,.35)}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-thumb{background:rgba(37,211,102,.25);border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:rgba(37,211,102,.45)}
 
-/* WhatsApp doodle pattern */
-.doodle{
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Cg fill='none' stroke='%23e9edef' stroke-opacity='0.035' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='42' cy='40' r='13'/%3E%3Cpath d='M96 32q9-13 18 0t18 0'/%3E%3Crect x='176' y='26' width='24' height='24' rx='6'/%3E%3Cpath d='M122 108c0-9 14-9 14 0 0 8-14 16-14 16s-14-8-14-16c0-9 14-9 14 0z'/%3E%3Ccircle cx='212' cy='118' r='9'/%3E%3Cpath d='M34 122l12 7-12 7z'/%3E%3Cpath d='M40 200q18-18 36 0'/%3E%3Cpath d='M150 192h22M161 181v22'/%3E%3Ccircle cx='228' cy='208' r='11'/%3E%3Cpath d='M92 226q7 9 0 18'/%3E%3Cpath d='M180 236q10 8 20 0'/%3E%3C/g%3E%3C/svg%3E");
+/* ============ ANIMATED BACKGROUND ============ */
+.orb{position:fixed;border-radius:50%;filter:blur(100px);z-index:0;pointer-events:none;animation:drift 20s ease-in-out infinite alternate}
+.orb-1{width:560px;height:560px;background:radial-gradient(circle,#0f9d6a,transparent 70%);opacity:.32;top:-180px;left:-140px}
+.orb-2{width:480px;height:480px;background:radial-gradient(circle,#0a6b50,transparent 70%);opacity:.3;bottom:-160px;right:-120px;animation-delay:-7s}
+.orb-3{width:340px;height:340px;background:radial-gradient(circle,#25d366,transparent 70%);opacity:.14;top:38%;left:55%;animation-delay:-13s}
+@keyframes drift{0%{transform:translate(0,0) scale(1)}100%{transform:translate(70px,50px) scale(1.12)}}
+.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(ellipse 90% 70% at 50% 30%,#000 30%,transparent 100%);
 }
 
-/* ================= AUTH VIEW ================= */
-#authView{height:100%;overflow-y:auto}
-.auth-strip{height:210px;background:linear-gradient(120deg,var(--deep),var(--newteal));position:relative}
-.auth-strip-inner{max-width:1000px;margin:0 auto;padding:34px 24px 0;display:flex;align-items:center;gap:16px}
-.logo-circle{width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.16);border:2px solid rgba(255,255,255,.45);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.2)}
-.logo-circle svg{width:34px;height:34px}
-.auth-strip h1{color:#fff;font-size:24px;letter-spacing:1px}
-.auth-strip p{color:rgba(255,255,255,.85);font-size:11px;letter-spacing:3px;font-weight:600}
-.auth-wrap{max-width:520px;margin:-105px auto 60px;padding:0 16px}
-.auth-card{background:var(--panel);border-radius:14px;box-shadow:0 18px 60px rgba(0,0,0,.5);padding:34px 34px 30px;text-align:center}
-.auth-logo{width:92px;height:92px;margin:0 auto 14px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#3ddc74,var(--newteal));display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(0,168,132,.35);position:relative}
-.auth-logo svg{width:52px;height:52px}
-.auth-logo::after{content:'';position:absolute;inset:-9px;border-radius:50%;border:2px solid rgba(0,168,132,.35);animation:ring 2.2s infinite}
-@keyframes ring{0%{transform:scale(.92);opacity:.9}100%{transform:scale(1.18);opacity:0}}
-.auth-card h2{font-size:21px;font-weight:500;margin-bottom:6px}
-.auth-card .sub{color:var(--muted);font-size:13.5px;line-height:1.6;margin-bottom:20px}
-.auth-card .sub b{color:var(--green)}
-.key-card{border:1.5px dashed rgba(0,168,132,.5);border-radius:14px;padding:22px 18px;background:rgba(0,168,132,.06);margin-bottom:14px}
-.key-card .lbl{font-size:10.5px;letter-spacing:2.5px;color:var(--muted);font-weight:700;margin-bottom:10px}
-.key-card .key{font-family:Consolas,monospace;font-size:21px;letter-spacing:3.5px;color:var(--green);word-break:break-all;line-height:1.5}
-.badge{display:inline-block;margin-top:12px;padding:5px 14px;border-radius:999px;font-size:11.5px;font-weight:700;letter-spacing:.6px}
-.badge.pending{background:#3d3214;color:#ffd97a;border:1px solid #6b5722}
-.badge.ok{background:#0c3d2c;color:#7ae0a5;border:1px solid #14603f}
-.row-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:6px}
-.wa-btn{border-radius:999px;padding:11px 22px;font-size:14px;font-weight:600;transition:.18s;display:inline-flex;align-items:center;gap:8px}
-.wa-btn.primary{background:var(--newteal);color:#fff}
-.wa-btn.primary:hover{background:#00c29a;transform:translateY(-1px)}
-.wa-btn.ghost{background:var(--panel2);color:var(--text)}
-.wa-btn.ghost:hover{background:var(--active)}
-.wa-btn.danger{background:#5c1f24;color:#ffb3b3}
-.wa-btn.danger:hover{background:#75282f}
-.wa-btn.block{width:100%;justify-content:center;margin-top:18px}
-.wa-btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
-.steps-list{text-align:left;margin-top:22px;border-top:1px solid var(--line);padding-top:18px}
-.step-item{display:flex;gap:14px;padding:9px 0;font-size:13.5px;color:#c7d0d4;line-height:1.5}
-.step-item .n{flex:0 0 24px;height:24px;border-radius:50%;background:var(--panel2);color:var(--green);font-weight:700;font-size:12.5px;display:flex;align-items:center;justify-content:center}
-.mini-key{margin-top:18px;font-size:12px;color:var(--muted)}
-.mini-key b{color:var(--green);font-family:Consolas,monospace;letter-spacing:2px}
+/* ============ UTILITIES ============ */
+.glass{background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 24px 70px rgba(0,0,0,.45)}
+.grad-text{background:linear-gradient(92deg,#25d366 0%,#7ef0b2 45%,#00a884 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:999px;font-size:12px;font-weight:600;border:1px solid var(--line);background:var(--glass2)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:pulse 1.8s infinite}
+@keyframes pulse{50%{opacity:.35}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+.fade-up{animation:fadeUp .6s cubic-bezier(.22,.9,.35,1) both}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border-radius:14px;padding:13px 24px;font-size:14px;font-weight:600;transition:.2s;letter-spacing:.2px}
+.btn-primary{background:linear-gradient(120deg,var(--green),var(--teal));color:#04241a;box-shadow:0 8px 28px rgba(37,211,102,.32)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 38px rgba(37,211,102,.48)}
+.btn-primary:active{transform:translateY(0)}
+.btn-primary:disabled{opacity:.5;transform:none;cursor:wait}
+.btn-ghost{background:var(--glass2);border:1px solid var(--line);color:var(--text)}
+.btn-ghost:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.2)}
+.btn-danger{background:rgba(255,107,122,.1);border:1px solid rgba(255,107,122,.35);color:var(--red)}
+.btn-danger:hover{background:rgba(255,107,122,.2)}
+.btn-sm{padding:9px 16px;font-size:12.5px;border-radius:11px}
+.btn-block{width:100%}
+
+.fld{margin-bottom:16px}
+.fld label{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;letter-spacing:1.4px;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.fld input,.fld select,.fld textarea{
+  width:100%;background:rgba(255,255,255,.045);border:1px solid var(--line);border-radius:13px;
+  padding:13px 16px;font-size:14px;color:var(--text);outline:none;transition:.2s;
+}
+.fld input::placeholder,.fld textarea::placeholder{color:var(--dim)}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3.5px rgba(0,168,132,.16);background:rgba(255,255,255,.06)}
+.fld select option{background:#0d1a16;color:var(--text)}
+.fld textarea{resize:vertical;min-height:84px}
+
+/* ============ AUTH VIEW ============ */
+#authView{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 18px;position:relative;z-index:1}
+.brand-mark{position:relative;width:104px;height:104px;margin-bottom:22px}
+.brand-mark .core{
+  width:104px;height:104px;border-radius:34px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#2ee27a,#00a884 60%,#0d7a5f);
+  box-shadow:0 18px 50px rgba(0,200,130,.4), inset 0 2px 12px rgba(255,255,255,.35);
+}
+.brand-mark .core svg{width:56px;height:56px;filter:drop-shadow(0 3px 6px rgba(0,0,0,.25))}
+.brand-mark::before,.brand-mark::after{content:'';position:absolute;inset:-13px;border-radius:42px;border:1.5px solid rgba(37,211,102,.4);animation:ring 2.6s ease-out infinite}
+.brand-mark::after{inset:-26px;border-radius:50px;animation-delay:1.3s;border-color:rgba(37,211,102,.22)}
+@keyframes ring{0%{transform:scale(.9);opacity:0}30%{opacity:1}100%{transform:scale(1.08);opacity:0}}
+.brand-name{font-size:clamp(34px,6vw,54px);font-weight:800;letter-spacing:2px;text-align:center;line-height:1.1}
+.brand-tag{margin:10px 0 34px;font-size:12px;letter-spacing:4.5px;color:var(--muted);text-transform:uppercase;font-weight:500;text-align:center}
+.auth-card{width:100%;max-width:480px;padding:32px;position:relative;overflow:hidden}
+.auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(126,240,178,.6),transparent)}
+
+/* steps bar */
+.steps-bar{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:28px}
+.stp{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;color:var(--dim);transition:.3s}
+.stp .stp-n{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:11px;transition:.3s;background:var(--glass2)}
+.stp.active{color:var(--mint)}
+.stp.active .stp-n{border-color:var(--green);color:var(--green);box-shadow:0 0 14px rgba(37,211,102,.4)}
+.stp.done{color:var(--green)}
+.stp.done .stp-n{background:linear-gradient(135deg,var(--green),var(--teal));border-color:transparent;color:#04241a}
+.stp-line{width:26px;height:1.5px;background:var(--line);border-radius:2px}
+
+.key-display{
+  background:rgba(37,211,102,.06);border:1.5px dashed rgba(37,211,102,.4);border-radius:16px;
+  padding:24px 18px;text-align:center;margin-bottom:16px;position:relative;overflow:hidden;
+}
+.key-display .k-lbl{font-size:10px;letter-spacing:3px;color:var(--muted);font-weight:700;margin-bottom:12px}
+.key-display .k-val{font-family:var(--mono);font-size:clamp(17px,3.4vw,22px);font-weight:700;letter-spacing:3px;color:var(--mint);word-break:break-all;line-height:1.6;text-shadow:0 0 24px rgba(126,240,178,.5)}
+.status-pill{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:7px 16px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.6px}
+.status-pill.wait{background:rgba(255,200,97,.1);border:1px solid rgba(255,200,97,.35);color:var(--amber)}
+.status-pill.ok{background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.4);color:var(--mint)}
+.auth-btns{display:flex;gap:10px;flex-wrap:wrap}
+.auth-btns .btn{flex:1;min-width:120px}
+.auth-note{margin-top:20px;font-size:12.5px;line-height:1.75;color:var(--muted);background:var(--glass2);border:1px solid var(--line);border-radius:13px;padding:14px 16px}
+.auth-note b{color:var(--mint);font-weight:600}
 /* auth tabs */
-.tabs{display:flex;background:var(--panel2);border-radius:10px;padding:5px;margin-bottom:18px}
-.tab{flex:1;padding:10px;border-radius:8px;font-size:14px;font-weight:600;color:var(--muted);transition:.2s}
-.tab.active{background:var(--newteal);color:#fff}
-.field{text-align:left;margin-bottom:14px}
-.field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px;font-weight:600}
-.field input,.field select,.field textarea{
-  width:100%;background:var(--active);border:1px solid transparent;border-radius:9px;
-  padding:12px 14px;font-size:14.5px;color:var(--text);outline:none;transition:.15s;font-family:inherit;
+.auth-tabs{display:flex;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:13px;padding:5px;margin-bottom:22px}
+.auth-tab{flex:1;padding:10px;border-radius:9px;font-size:13.5px;font-weight:600;color:var(--muted);transition:.25s}
+.auth-tab.active{background:linear-gradient(120deg,var(--green),var(--teal));color:#04241a;box-shadow:0 4px 16px rgba(37,211,102,.3)}
+.admin-hint{margin-top:18px;text-align:center;font-size:12px;color:var(--dim)}
+.admin-hint code{font-family:var(--mono);color:var(--amber);font-size:11.5px}
+
+/* ============ DASHBOARD ============ */
+#dashView{position:relative;z-index:1;min-height:100vh;padding-bottom:60px}
+.topbar{
+  position:sticky;top:14px;z-index:50;max-width:1240px;margin:14px auto 0;
+  display:flex;align-items:center;gap:14px;padding:12px 20px;border-radius:18px;
 }
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--newteal);background:#233138}
-.field textarea{resize:vertical;min-height:74px}
-.field input[type=file]{padding:9px 10px;font-size:12.5px;color:var(--muted)}
-.field input[type=file]::file-selector-button{
-  background:var(--newteal);border:none;color:#fff;padding:7px 14px;border-radius:7px;
-  font-weight:600;margin-right:12px;cursor:pointer;font-family:inherit;font-size:12.5px;
+@media(max-width:1280px){.topbar{margin:14px 14px 0}}
+.tb-logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#2ee27a,#00a884);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,200,130,.35);flex-shrink:0}
+.tb-logo svg{width:24px;height:24px}
+.tb-brand{font-weight:700;font-size:16.5px;letter-spacing:.8px}
+.tb-brand small{display:block;font-size:9.5px;letter-spacing:2.6px;color:var(--muted);font-weight:600}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.tb-uptime{font-family:var(--mono);font-size:12px;color:var(--mint)}
+.tb-user{display:flex;align-items:center;gap:10px;padding:6px 12px 6px 6px;border-radius:999px;background:var(--glass2);border:1px solid var(--line)}
+.tb-user .av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--teal));display:flex;align-items:center;justify-content:center;font-weight:700;color:#04241a;font-size:14px}
+.tb-user .un{font-size:13px;font-weight:600}
+.tb-user .rl{font-size:9px;letter-spacing:1.5px;color:var(--mint);font-weight:700;display:block}
+.icon-btn{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:.2s;background:var(--glass2);border:1px solid var(--line)}
+.icon-btn:hover{color:var(--red);border-color:rgba(255,107,122,.4);background:rgba(255,107,122,.08)}
+
+.dash-main{max-width:1240px;margin:0 auto;padding:30px 14px 0}
+@media(min-width:1280px){.dash-main{padding:30px 0 0}}
+.hero-row{margin-bottom:26px}
+.hero-row h2{font-size:clamp(22px,3.4vw,30px);font-weight:700}
+.hero-row h2 span{font-weight:300;color:var(--muted)}
+.hero-row p{color:var(--muted);font-size:13px;margin-top:5px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+
+/* stats */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-bottom:26px}
+.stat{padding:22px;display:flex;align-items:center;gap:17px;transition:.25s;position:relative;overflow:hidden}
+.stat::after{content:'';position:absolute;top:-40%;right:-20%;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(37,211,102,.14),transparent 70%);pointer-events:none}
+.stat:hover{transform:translateY(-4px);border-color:rgba(37,211,102,.3)}
+.stat .ic{width:54px;height:54px;border-radius:17px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;background:linear-gradient(135deg,rgba(37,211,102,.2),rgba(0,168,132,.12));border:1px solid rgba(37,211,102,.28)}
+.stat .lb{font-size:11px;letter-spacing:1.8px;color:var(--muted);text-transform:uppercase;font-weight:600}
+.stat .vl{font-size:21px;font-weight:700;margin-top:3px;font-family:var(--mono)}
+.stat .vl.small{font-size:15px;line-height:1.45;font-family:'Poppins',sans-serif;font-weight:600}
+
+/* work grid */
+.work-grid{display:grid;grid-template-columns:430px 1fr;gap:18px;align-items:start}
+@media(max-width:1000px){.work-grid{grid-template-columns:1fr}}
+.card{padding:26px}
+.card-head{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.card-head .ci{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,rgba(37,211,102,.22),rgba(0,168,132,.12));border:1px solid rgba(37,211,102,.3);display:flex;align-items:center;justify-content:center;font-size:19px}
+.card-head h3{font-size:16.5px;font-weight:600}
+.card-head p{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* segmented type picker */
+.seg{display:flex;background:rgba(255,255,255,.045);border:1px solid var(--line);border-radius:14px;padding:5px;gap:5px;margin-bottom:20px}
+.seg-btn{flex:1;padding:11px 6px;border-radius:10px;font-size:12.5px;font-weight:600;color:var(--muted);transition:.22s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.seg-btn .si{font-size:19px}
+.seg-btn:hover{color:var(--text)}
+.seg-btn.active{background:linear-gradient(120deg,var(--green),var(--teal));color:#04241a;box-shadow:0 6px 18px rgba(37,211,102,.3)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+
+/* file zones */
+.file-zone{
+  display:flex;align-items:center;gap:13px;border:1.5px dashed rgba(255,255,255,.18);border-radius:13px;
+  padding:14px 16px;cursor:pointer;transition:.2s;background:rgba(255,255,255,.025);margin-bottom:16px;
 }
-.admin-hint{margin-top:16px;font-size:12px;color:var(--muted);background:var(--panel2);padding:10px 14px;border-radius:9px;line-height:1.7}
-.admin-hint code{color:#ffd97a;font-family:Consolas,monospace}
+.file-zone:hover{border-color:var(--teal);background:rgba(0,168,132,.06)}
+.file-zone.has{border-style:solid;border-color:rgba(37,211,102,.5);background:rgba(37,211,102,.06)}
+.file-zone .fz-ic{font-size:22px}
+.file-zone .fz-tx{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.file-zone.has .fz-tx{color:var(--mint);font-weight:500}
+.file-zone input{display:none}
+.hint-line{font-size:12px;color:var(--dim);line-height:1.65;margin:-4px 0 16px;padding-left:2px}
+.hint-line b{color:var(--muted)}
 
-/* ================= APP VIEW ================= */
-#appView{height:100%;padding:0}
-@media(min-width:1450px){#appView{padding:16px 40px}}
-.app-shell{display:flex;height:100%;max-width:1680px;margin:0 auto;background:var(--panel);box-shadow:0 6px 40px rgba(0,0,0,.4)}
-@media(min-width:1450px){.app-shell{border-radius:14px;overflow:hidden}}
-
-/* ---- Sidebar ---- */
-.sidebar{width:390px;min-width:340px;border-right:1px solid var(--line);display:flex;flex-direction:column;background:var(--panel);position:relative}
-.sb-header{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--panel2);min-height:62px}
-.avatar{width:42px;height:42px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#3ddc74,var(--newteal));display:flex;align-items:center;justify-content:center;font-weight:700;color:#06251a;font-size:18px;flex-shrink:0}
-.sb-me .name{font-size:15px;font-weight:600;display:flex;align-items:center;gap:7px}
-.sb-me .role{font-size:9.5px;background:rgba(37,211,102,.18);color:var(--green);padding:2px 8px;border-radius:999px;letter-spacing:1px;font-weight:700}
-.sb-me .status{font-size:12px;color:var(--newteal);display:flex;align-items:center;gap:5px}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 1.8s infinite}
-@keyframes blink{50%{opacity:.35}}
-.sb-icons{margin-left:auto;display:flex;gap:4px}
-.icon-btn{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:.15s;font-size:17px}
-.icon-btn:hover{background:rgba(134,150,160,.15);color:var(--text)}
-.sb-stats{display:flex;gap:14px;padding:9px 16px;background:var(--panel);border-bottom:1px solid var(--line);font-size:12px;color:var(--muted);flex-wrap:wrap}
-.sb-stats b{color:var(--text);font-weight:600}
-.sb-stats .green{color:var(--green)}
-.sb-tabs{display:flex;gap:7px;padding:10px 12px 4px}
-.ftab{padding:6px 13px;border-radius:999px;font-size:12.5px;font-weight:600;background:var(--panel2);color:var(--muted);transition:.15s}
-.ftab:hover{background:var(--active)}
-.ftab.active{background:rgba(0,168,132,.22);color:#7fdcc0}
-.sb-search{padding:8px 12px 10px}
-.sb-search input{width:100%;background:var(--panel2);border:none;border-radius:9px;padding:9px 14px 9px 38px;color:var(--text);font-size:13.5px;outline:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' fill='%238696a0' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:12px center}
-.chat-list{flex:1;overflow-y:auto}
-.chat-item{display:flex;gap:13px;padding:11px 14px;cursor:pointer;transition:background .12s;border-bottom:1px solid rgba(134,150,160,.06)}
-.chat-item:hover{background:var(--hover)}
-.chat-item.active{background:var(--active)}
-.chat-avatar{width:49px;height:49px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;background:linear-gradient(135deg,#2a3942,#202c33);border:1px solid rgba(134,150,160,.12)}
-.chat-mid{flex:1;min-width:0;padding-top:2px}
-.chat-line1{display:flex;justify-content:space-between;gap:8px}
-.chat-name{font-size:15.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.chat-time{font-size:11.5px;color:var(--newteal);flex-shrink:0;font-weight:600}
-.chat-line2{display:flex;justify-content:space-between;gap:8px;margin-top:3px}
-.chat-preview{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.list-empty{text-align:center;color:var(--muted);padding:44px 24px;font-size:13.5px;line-height:1.8}
-.fab{
-  position:absolute;bottom:20px;right:18px;width:56px;height:56px;border-radius:18px;
-  background:var(--newteal);display:flex;align-items:center;justify-content:center;
-  box-shadow:0 8px 24px rgba(0,168,132,.45);transition:.2s;z-index:5;
+/* session list */
+.sess-list{display:flex;flex-direction:column;gap:12px;max-height:640px;overflow-y:auto;padding-right:4px}
+.sess-item{
+  display:flex;gap:15px;align-items:flex-start;padding:17px;border-radius:16px;
+  background:var(--glass2);border:1px solid var(--line);transition:.22s;animation:fadeUp .4s both;
 }
-.fab:hover{transform:scale(1.07) rotate(90deg);background:#00c29a}
-.fab svg{width:24px;height:24px;fill:#fff}
+.sess-item:hover{border-color:rgba(37,211,102,.35);background:rgba(37,211,102,.04);transform:translateX(3px)}
+.sess-icon{width:48px;height:48px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;background:linear-gradient(135deg,rgba(37,211,102,.18),rgba(0,168,132,.1));border:1px solid rgba(37,211,102,.25)}
+.sess-body{flex:1;min-width:0}
+.sess-top{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.sess-top b{font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:210px}
+.live-pill{display:inline-flex;align-items:center;gap:6px;font-size:9.5px;font-weight:800;letter-spacing:1.6px;color:var(--mint);background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.32);padding:3px 10px;border-radius:999px}
+.sess-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.m-chip{font-size:11px;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--line);padding:3.5px 10px;border-radius:999px}
+.sess-id{margin-top:9px;font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:.4px}
+.sess-actions{display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.empty-state{text-align:center;padding:54px 20px;color:var(--muted)}
+.empty-state .e-ic{font-size:46px;margin-bottom:14px;display:inline-block;animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-9px)}}
+.empty-state p{font-size:13.5px;line-height:1.8}
+.skeleton{height:96px;border-radius:16px;background:linear-gradient(100deg,var(--glass2) 40%,rgba(255,255,255,.09) 50%,var(--glass2) 60%);background-size:200% 100%;animation:shimmer 1.4s infinite}
+@keyframes shimmer{to{background-position:-200% 0}}
 
-/* ---- Main / chat area ---- */
-.main{flex:1;display:flex;flex-direction:column;min-width:0;position:relative}
-/* empty state */
-#emptyState{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--panel);text-align:center;padding:30px;border-bottom:6px solid var(--newteal)}
-.empty-art{width:170px;height:170px;border-radius:50%;background:var(--panel2);display:flex;align-items:center;justify-content:center;margin-bottom:26px;position:relative}
-.empty-art svg{width:90px;height:90px;opacity:.9}
-.empty-art::before,.empty-art::after{content:'';position:absolute;inset:-16px;border-radius:50%;border:1.5px solid rgba(0,168,132,.18);animation:ring 3s infinite}
-.empty-art::after{inset:-34px;animation-delay:1.2s}
-#emptyState h2{font-size:29px;font-weight:300;letter-spacing:.5px;margin-bottom:10px}
-#emptyState h2 b{color:var(--green);font-weight:600}
-#emptyState p{color:var(--muted);font-size:13.5px;line-height:1.7;max-width:420px}
-.lock-note{position:absolute;bottom:26px;font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
+/* ============ LOGS MODAL ============ */
+.overlay{position:fixed;inset:0;background:rgba(3,8,6,.75);backdrop-filter:blur(6px);z-index:100;display:flex;align-items:center;justify-content:center;padding:18px}
+.logs-modal{width:100%;max-width:860px;max-height:84vh;display:flex;flex-direction:column;overflow:hidden;animation:fadeUp .3s both}
+.logs-head{display:flex;align-items:center;gap:13px;padding:18px 22px;border-bottom:1px solid var(--line)}
+.logs-head .lt{font-size:11px;font-weight:800;letter-spacing:2.4px;color:var(--mint);display:flex;align-items:center;gap:8px}
+.logs-head .lid{font-family:var(--mono);font-size:12px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.logs-body{overflow-y:auto;padding:18px 22px;font-family:var(--mono);font-size:12.5px;line-height:1.55;background:rgba(0,0,0,.22)}
+.log-line{display:flex;gap:11px;padding:6px 12px;border-radius:9px;margin-bottom:3px;align-items:baseline;animation:fadeUp .25s both}
+.log-line:hover{background:rgba(255,255,255,.04)}
+.log-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;position:relative;top:-1px}
+.log-time{color:var(--dim);flex-shrink:0;font-size:11px}
+.log-msg{word-break:break-word;color:#c4d6cf}
+.log-line.ok .log-dot{background:var(--green);box-shadow:0 0 8px var(--green)}
+.log-line.ok .log-msg{color:var(--mint)}
+.log-line.err .log-dot{background:var(--red);box-shadow:0 0 8px var(--red)}
+.log-line.err .log-msg{color:#ffb3bc}
+.log-line.warn .log-dot{background:var(--amber);box-shadow:0 0 8px var(--amber)}
+.log-line.warn .log-msg{color:#ffe0a8}
+.log-line.info .log-dot{background:#5aa7c7}
 
-/* chat view */
-#chatView{flex:1;display:flex;flex-direction:column;min-height:0}
-.chat-header{display:flex;align-items:center;gap:12px;padding:8px 14px;background:var(--panel2);min-height:62px}
-.chat-header .info{min-width:0;flex:1}
-.chat-header .name{font-size:15.5px;font-weight:600;display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.type-pill{font-size:9.5px;padding:2.5px 8px;border-radius:999px;letter-spacing:.8px;font-weight:800;flex-shrink:0}
-.tp-message{background:rgba(83,189,235,.16);color:#7fd0f0}
-.tp-image{background:rgba(211,169,245,.16);color:#d3a9f5}
-.tp-sticker{background:rgba(245,217,142,.16);color:#f5d98e}
-.chat-header .live{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
-.chat-header .live b{color:var(--newteal);font-variant-numeric:tabular-nums}
-.chat-body{flex:1;overflow-y:auto;padding:16px 5%;background-color:var(--bg)}
-.day-chip{width:fit-content;margin:12px auto;background:#182229;color:#9ab2bd;font-size:11.5px;padding:5px 13px;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.25);text-align:center}
-.msg-row{display:flex;margin:3px 0;animation:msgIn .18s ease}
-@keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.msg-row.out{justify-content:flex-end}
-.bubble{max-width:min(620px,85%);border-radius:9px;padding:7px 11px 6px;font-size:13.5px;line-height:1.55;box-shadow:0 1px 1px rgba(0,0,0,.22);word-break:break-word}
-.msg-row.in .bubble{background:var(--bub-in);border-top-left-radius:2px}
-.msg-row.out .bubble{background:var(--bub-out);border-top-right-radius:2px}
-.bubble.err{background:#3a1e23;border-left:3px solid #e05c6b}
-.bubble.warn{background:#38301a;border-left:3px solid #e0b95c}
-.bubble .meta{float:right;margin:9px 0 0 10px;font-size:10.5px;color:rgba(255,255,255,.55);display:flex;gap:4px;align-items:center;white-space:nowrap}
-.ticks{color:var(--tick);font-size:12px;letter-spacing:-2.5px;margin-left:2px}
-.chat-footer{display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--panel2)}
-.chat-footer .finfo{flex:1;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.chat-footer .finfo b{color:#b6c4ca;font-weight:600}
+/* ============ TOASTS ============ */
+#toastWrap{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:300;display:flex;flex-direction:column;align-items:center;gap:9px;width:100%;max-width:440px;padding:0 16px}
+.toast{width:100%;text-align:center;padding:14px 22px;border-radius:14px;font-size:13.5px;font-weight:500;box-shadow:0 16px 44px rgba(0,0,0,.5);animation:fadeUp .3s both;background:rgba(18,32,27,.92);backdrop-filter:blur(14px);border:1px solid var(--line)}
+.toast.success{border-color:rgba(37,211,102,.45);color:var(--mint)}
+.toast.error{border-color:rgba(255,107,122,.45);color:#ffb3bc}
+.toast.info{color:#cfe3dc}
 
-/* ---- New session modal ---- */
-.overlay{position:fixed;inset:0;background:rgba(5,10,13,.72);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}
-.modal{background:var(--panel);width:100%;max-width:560px;max-height:92vh;border-radius:14px;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.6);animation:modalIn .22s ease}
-@keyframes modalIn{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
-.modal-head{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--newteal);border-radius:14px 14px 0 0;color:#fff}
-.modal-head h3{font-size:16.5px;font-weight:600;flex:1}
-.modal-head .icon-btn{color:rgba(255,255,255,.9)}
-.modal-head .icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
-.modal-body{padding:20px 22px 24px;overflow-y:auto}
-.type-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
-.type-card{background:var(--panel2);border:1.5px solid transparent;border-radius:12px;padding:15px 8px;text-align:center;cursor:pointer;transition:.16s}
-.type-card:hover{background:var(--active)}
-.type-card.active{border-color:var(--newteal);background:rgba(0,168,132,.1)}
-.type-card .ic{font-size:26px;display:block;margin-bottom:7px}
-.type-card b{display:block;font-size:13.5px;margin-bottom:2px}
-.type-card small{font-size:11px;color:var(--muted)}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
-@media(max-width:520px){.grid2{grid-template-columns:1fr}}
+footer{position:relative;z-index:1;text-align:center;padding:26px;font-size:11.5px;color:var(--dim);letter-spacing:1px}
+footer b{color:var(--teal)}
 
-/* ---- Toasts ---- */
-#toastWrap{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:9px;z-index:300}
-.toast{background:#1d2a31;color:#e9edef;padding:12px 22px;border-radius:9px;font-size:13.5px;box-shadow:0 10px 30px rgba(0,0,0,.5);animation:toastIn .25s ease;max-width:88vw;text-align:center}
-.toast.success{border-left:3px solid var(--green)}
-.toast.error{border-left:3px solid #e05c6b}
-.toast.info{border-left:3px solid var(--tick)}
-@keyframes toastIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-
-/* ---- Mobile ---- */
-.back-btn{display:none}
-@media(max-width:860px){
-  .sidebar{width:100%;min-width:0;border-right:none}
-  .main{position:absolute;inset:0;transform:translateX(100%);transition:transform .24s ease;z-index:10;background:var(--panel)}
-  .app-shell.chat-open .main{transform:none}
-  .back-btn{display:flex}
-  .chat-body{padding:14px 4%}
+@media(max-width:640px){
+  .tb-uptime{display:none}
+  .tb-user .un{display:none}
+  .row2{grid-template-columns:1fr}
+  .sess-actions{flex-direction:row;width:100%}
+  .sess-item{flex-wrap:wrap}
+  .sess-actions .btn{flex:1}
 }
 </style>
 </head>
 <body>
 
-<!-- ==================== AUTH VIEW ==================== -->
-<div id="authView" class="doodle">
-  <div class="auth-strip">
-    <div class="auth-strip-inner">
-      <div class="logo-circle">
-        <svg viewBox="0 0 24 24"><path fill="#fff" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-      </div>
-      <div><h1>WALEED KHAN</h1><p>OFFICIAL WHATSAPP SERVER</p></div>
+<div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
+<div class="bg-grid"></div>
+
+<!-- ==================== AUTH ==================== -->
+<div id="authView">
+  <div class="brand-mark fade-up">
+    <div class="core">
+      <svg viewBox="0 0 24 24"><path fill="#fff" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
     </div>
   </div>
+  <h1 class="brand-name fade-up" style="animation-delay:.08s">WALEED <span class="grad-text">KHAN</span></h1>
+  <p class="brand-tag fade-up" style="animation-delay:.14s">WhatsApp Automation Server</p>
 
-  <div class="auth-wrap">
-    <div class="auth-card">
-      <div class="auth-logo">
-        <svg viewBox="0 0 24 24"><path fill="#fff" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-      </div>
+  <div class="auth-card glass fade-up" style="animation-delay:.2s">
+    <div class="steps-bar">
+      <div class="stp" id="stp1"><span class="stp-n">1</span>Device Key</div>
+      <div class="stp-line"></div>
+      <div class="stp" id="stp2"><span class="stp-n">2</span>Approval</div>
+      <div class="stp-line"></div>
+      <div class="stp" id="stp3"><span class="stp-n">3</span>Login</div>
+    </div>
 
-      <!-- STEP 1 : approval -->
-      <div id="authStep1">
-        <h2>Device Approval</h2>
-        <p class="sub">Apne device ki unique key generate karein. Jab tak admin key approve nahi karta, aap <b>WALEED KHAN Server</b> use nahi kar sakte.</p>
-        <div class="key-card">
-          <div class="lbl">YOUR APPROVAL KEY</div>
-          <div class="key" id="keyOut">— — — — — —</div>
-          <span class="badge pending" id="keyStatus">⏳ WAITING FOR APPROVAL</span>
-        </div>
-        <div class="row-btns">
-          <button class="wa-btn primary" id="btnGenKey" onclick="generateApprovalKey()">⚡ Generate Key</button>
-          <button class="wa-btn ghost" onclick="copyKey()">📋 Copy</button>
-          <button class="wa-btn ghost" onclick="checkApproval(true)">🔄 Check</button>
-        </div>
-        <div class="steps-list">
-          <div class="step-item"><span class="n">1</span><span>Upar diye button se apni <b style="color:var(--green)">approval key</b> generate karein</span></div>
-          <div class="step-item"><span class="n">2</span><span>Key copy karke admin ko bhejein — admin server folder ki <b style="color:var(--green)">approval.txt</b> file me key paste kar de</span></div>
-          <div class="step-item"><span class="n">3</span><span>"Check" dabayein — approved hone par login screen khul jaye gi ✅</span></div>
-        </div>
+    <!-- STEP 1-2 : KEY -->
+    <div id="stepKey">
+      <div class="key-display">
+        <div class="k-lbl">YOUR DEVICE APPROVAL KEY</div>
+        <div class="k-val" id="keyOut">— — — — — — — —</div>
+        <div><span class="status-pill wait" id="keyStatus"><span class="dot" style="background:var(--amber);box-shadow:0 0 10px var(--amber)"></span> WAITING FOR APPROVAL</span></div>
       </div>
+      <div class="auth-btns">
+        <button class="btn btn-primary" id="btnGen" onclick="generateKey()">⚡ Generate Key</button>
+        <button class="btn btn-ghost" onclick="copyKey()">📋 Copy</button>
+        <button class="btn btn-ghost" onclick="checkApproval(true)">🔄 Refresh</button>
+      </div>
+      <div class="auth-note">
+        🔐 Key approve karwane ke liye ye key admin ko bhejein — admin server folder ki <b>approval.txt</b> file me key paste kar dega. Approved hote hi login screen khul jayegi.
+      </div>
+    </div>
 
-      <!-- STEP 2 : login / signup -->
-      <div id="authStep2" class="hidden">
-        <h2>Welcome 👋</h2>
-        <p class="sub">Aapki key <b>approved</b> hai ✅ — ab login karein ya naya account banayein.</p>
-        <div class="tabs">
-          <button class="tab active" id="authTabLogin" onclick="switchAuthTab('login')">Login</button>
-          <button class="tab" id="authTabSignup" onclick="switchAuthTab('signup')">Sign Up</button>
-        </div>
-        <div id="loginForm">
-          <div class="field"><label>USERNAME</label><input id="loginUser" placeholder="Enter username" autocomplete="username"/></div>
-          <div class="field"><label>PASSWORD</label><input id="loginPass" type="password" placeholder="Enter password" autocomplete="current-password"/></div>
-          <button class="wa-btn primary block" onclick="doLogin()">➜ Login</button>
-        </div>
-        <div id="signupForm" class="hidden">
-          <div class="field"><label>NEW USERNAME (min 3 chars)</label><input id="signupUser" placeholder="Choose a username"/></div>
-          <div class="field"><label>NEW PASSWORD (min 6 chars)</label><input id="signupPass" type="password" placeholder="Choose a password"/></div>
-          <button class="wa-btn primary block" onclick="doSignup()">✨ Create Account</button>
-        </div>
-        <div class="admin-hint">👑 Default admin: <code>WALEED khan</code> / <code>WALEED khan786</code></div>
-        <p class="mini-key">Approved key: <b id="authKeyMini">—</b></p>
+    <!-- STEP 3 : LOGIN -->
+    <div id="stepLogin" class="hidden">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="authTabLogin" onclick="switchAuthTab('login')">Login</button>
+        <button class="auth-tab" id="authTabSignup" onclick="switchAuthTab('signup')">Create Account</button>
       </div>
+      <div id="formLogin">
+        <div class="fld"><label>👤 Username</label><input id="loginUser" placeholder="Enter username" autocomplete="username"/></div>
+        <div class="fld"><label>🔒 Password</label><input id="loginPass" type="password" placeholder="Enter password" autocomplete="current-password"/></div>
+        <button class="btn btn-primary btn-block" onclick="doLogin()">Launch Dashboard →</button>
+      </div>
+      <div id="formSignup" class="hidden">
+        <div class="fld"><label>👤 New Username <span style="opacity:.5">(min 3)</span></label><input id="signupUser" placeholder="Choose username"/></div>
+        <div class="fld"><label>🔒 New Password <span style="opacity:.5">(min 6)</span></label><input id="signupPass" type="password" placeholder="Choose password"/></div>
+        <button class="btn btn-primary btn-block" onclick="doSignup()">✨ Create Account</button>
+      </div>
+      <div class="admin-hint">Default admin — <code>WALEED khan</code> / <code>WALEED khan786</code></div>
     </div>
   </div>
 </div>
 
-<!-- ==================== APP VIEW ==================== -->
-<div id="appView" class="hidden">
-  <div class="app-shell" id="appShell">
-
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sb-header">
-        <div class="avatar" id="sbAvatar">W</div>
-        <div class="sb-me">
-          <div class="name"><span id="sbName">WALEED KHAN</span><span class="role" id="sbRole">USER</span></div>
-          <div class="status"><span class="dot"></span> online • server live</div>
-        </div>
-        <div class="sb-icons">
-          <button class="icon-btn" title="New Session" onclick="openNewSession()">
-            <svg width="19" height="19" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/></svg>
-          </button>
-          <button class="icon-btn" title="Logout" onclick="logout()">
-            <svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M6 12.5A3.5 3.5 0 0 0 9.5 16H12a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1H9.5A3.5 3.5 0 0 0 6 3.5V5H2.5A1.5 1.5 0 0 0 1 6.5v3A1.5 1.5 0 0 0 2.5 11H6v1.5zM7 5v6a2.5 2.5 0 0 0 2.5 2.5H12V2.5H9.5A2.5 2.5 0 0 0 7 5z" opacity=".4"/><path d="M2 8a.5.5 0 0 1 .5-.5h6.793L7.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L9.293 8.5H2.5A.5.5 0 0 1 2 8z"/></svg>
-          </button>
-        </div>
+<!-- ==================== DASHBOARD ==================== -->
+<div id="dashView" class="hidden">
+  <nav class="topbar glass">
+    <div class="tb-logo">
+      <svg viewBox="0 0 24 24"><path fill="#fff" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+    </div>
+    <div class="tb-brand">WALEED KHAN<small>AUTOMATION SERVER</small></div>
+    <div class="tb-right">
+      <span class="chip tb-uptime"><span class="dot"></span><span id="navUptime">—</span></span>
+      <div class="tb-user">
+        <div class="av" id="userAvatar">W</div>
+        <div><span class="un" id="userName">user</span><span class="rl" id="userRole">USER</span></div>
       </div>
-
-      <div class="sb-stats">
-        <span>⏱ <b id="statUptime" class="green">—</b></span>
-        <span>📡 <b id="statSessions">0</b> sessions</span>
-        <span id="usersChip" class="hidden">👥 <b id="statUsers">0</b> users</span>
-      </div>
-
-      <div class="sb-tabs">
-        <button class="ftab active" data-f="all" onclick="setFilter('all',this)">All</button>
-        <button class="ftab" data-f="message" onclick="setFilter('message',this)">💬 Messages</button>
-        <button class="ftab" data-f="image" onclick="setFilter('image',this)">🖼️ Images</button>
-        <button class="ftab" data-f="sticker" onclick="setFilter('sticker',this)">🎭 Stickers</button>
-      </div>
-
-      <div class="sb-search"><input id="searchInput" placeholder="Search or start a session" oninput="searchQ=this.value;renderChatList()"/></div>
-
-      <div class="chat-list" id="chatList"><div class="list-empty">Sessions load ho rahe hain...</div></div>
-
-      <button class="fab" title="New Session" onclick="openNewSession()">
-        <svg viewBox="0 0 24 24"><path d="M19.005 3.175H4.674C3.642 3.175 3 3.789 3 4.821V21.02l3.544-3.514h12.461c1.033 0 2.064-1.06 2.064-2.093V4.821c-.001-1.032-1.032-1.646-2.064-1.646zm-4.989 9.869H7.041a.97.97 0 0 1 0-1.94h7.975c.535 0 .969.434.969.97a.97.97 0 0 1-.969.97zm3.006-3.824H7.041a.97.97 0 0 1 0-1.94h9.981c.535 0 .969.434.969.97a.97.97 0 0 1-.969.97z"/></svg>
+      <button class="icon-btn" title="Logout" onclick="logout()">
+        <svg width="17" height="17" fill="currentColor" viewBox="0 0 16 16"><path d="M6 12.5A3.5 3.5 0 0 0 9.5 16H12a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1H9.5A3.5 3.5 0 0 0 6 3.5V5H2.5A1.5 1.5 0 0 0 1 6.5v3A1.5 1.5 0 0 0 2.5 11H6v1.5zM7 5v6a2.5 2.5 0 0 0 2.5 2.5H12V2.5H9.5A2.5 2.5 0 0 0 7 5z" opacity=".45"/><path d="M2 8a.5.5 0 0 1 .5-.5h6.793L7.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L9.293 8.5H2.5A.5.5 0 0 1 2 8z"/></svg>
       </button>
-    </aside>
+    </div>
+  </nav>
 
-    <!-- Main -->
-    <section class="main">
-      <!-- Empty state -->
-      <div id="emptyState">
-        <div class="empty-art">
-          <svg viewBox="0 0 24 24"><path fill="#00a884" opacity=".85" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-        </div>
-        <h2><b>WALEED KHAN</b> Server</h2>
-        <p>Bayen taraf se koi session select karein live logs dekhne ke liye, ya green ➕ button se naya message / image / sticker session banayein.</p>
-        <div class="lock-note">🔒 Powered by Baileys — WALEED KHAN Official</div>
+  <div class="dash-main">
+    <div class="hero-row fade-up">
+      <h2>Welcome back, <span class="grad-text" id="helloName">User</span> 👋</h2>
+      <p><span id="dateLine">—</span> &nbsp;•&nbsp; Server is live and broadcasting</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat glass fade-up" style="animation-delay:.05s">
+        <div class="ic">⏱️</div>
+        <div><div class="lb">Server Uptime</div><div class="vl small" id="statUptime">—</div></div>
       </div>
+      <div class="stat glass fade-up" style="animation-delay:.1s">
+        <div class="ic">📡</div>
+        <div><div class="lb">Active Sessions</div><div class="vl" id="statSessions">0</div></div>
+      </div>
+      <div class="stat glass fade-up hidden" id="usersStat" style="animation-delay:.15s">
+        <div class="ic">👥</div>
+        <div><div class="lb">Total Users</div><div class="vl" id="statUsers">0</div></div>
+      </div>
+    </div>
 
-      <!-- Chat view -->
-      <div id="chatView" class="hidden">
-        <div class="chat-header">
-          <button class="icon-btn back-btn" onclick="closeChat()">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
-          </button>
-          <div class="chat-avatar" id="chatAvatar" style="width:42px;height:42px;font-size:19px">💬</div>
-          <div class="info">
-            <div class="name"><span id="chatName">session</span><span class="type-pill tp-message" id="chatTypePill">MESSAGE</span></div>
-            <div class="live"><span class="dot"></span> live • <b id="chatUptime">—</b></div>
+    <div class="work-grid">
+      <!-- CREATE -->
+      <div class="card glass fade-up" style="animation-delay:.18s">
+        <div class="card-head">
+          <div class="ci">🚀</div>
+          <div><h3>Create New Session</h3><p>Message, image ya sticker broadcasting</p></div>
+        </div>
+
+        <div class="seg">
+          <button class="seg-btn active" data-t="message" onclick="setNsType('message',this)"><span class="si">💬</span>Message</button>
+          <button class="seg-btn" data-t="image" onclick="setNsType('image',this)"><span class="si">🖼️</span>Image</button>
+          <button class="seg-btn" data-t="sticker" onclick="setNsType('sticker',this)"><span class="si">🎭</span>Sticker</button>
+        </div>
+
+        <label class="file-zone" id="fzCreds">
+          <input type="file" id="csCreds" accept=".json,application/json" onchange="fzUpdate(this,'fzCredsTx','fzCreds','creds.json')">
+          <span class="fz-ic">🔑</span><span class="fz-tx" id="fzCredsTx">creds.json — WhatsApp credentials *</span>
+        </label>
+
+        <div id="rowPrefix" class="fld">
+          <label>✍️ Prefix Name *</label>
+          <input id="csPrefix" placeholder="e.g. WALEED KHAN"/>
+        </div>
+
+        <div id="rowMessage">
+          <label class="file-zone" id="fzMsg">
+            <input type="file" id="csMessage" accept=".txt,text/plain" onchange="fzUpdate(this,'fzMsgTx','fzMsg','message.txt')">
+            <span class="fz-ic">📝</span><span class="fz-tx" id="fzMsgTx">message.txt — 1 line = 1 message *</span>
+          </label>
+        </div>
+
+        <div id="rowMedia" class="hidden">
+          <label class="file-zone" id="fzMedia">
+            <input type="file" id="csMedia" multiple onchange="fzMediaUpdate(this)">
+            <span class="fz-ic">🖼️</span><span class="fz-tx" id="fzMediaTx">Media files select karein (multiple) *</span>
+          </label>
+        </div>
+
+        <div class="row2">
+          <div class="fld"><label>🎯 Target Type</label>
+            <select id="csTargetType">
+              <option value="contacts">👤 Contacts (numbers)</option>
+              <option value="gc">👥 Group ID</option>
+            </select>
           </div>
-          <button class="icon-btn" title="Refresh logs" onclick="fetchLogs()">
-            <svg width="17" height="17" fill="currentColor" viewBox="0 0 16 16"><path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/><path d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/></svg>
-          </button>
-          <button class="wa-btn danger" style="padding:8px 16px;font-size:13px" onclick="stopSelected()">🛑 Stop</button>
+          <div class="fld"><label>⏳ Delay (seconds)</label><input id="csDelay" type="number" min="1" value="5"/></div>
         </div>
 
-        <div class="chat-body doodle" id="chatBody"></div>
+        <div class="fld"><label>📮 Target ID</label>
+          <textarea id="csTarget" placeholder="923001234567&#10;923007654321  (comma ya new line se)&#10;ya group id: 123456789-123456"></textarea>
+        </div>
 
-        <div class="chat-footer">
-          <div class="finfo" id="chatFooterInfo">—</div>
+        <p class="hint-line" id="csHint"><b>💬 Message mode:</b> prefix + message file zaroori hai. Har message delay ke sath repeat hota rahega.</p>
+
+        <button class="btn btn-primary btn-block" onclick="createSession()">🚀 Launch Session</button>
+      </div>
+
+      <!-- SESSIONS -->
+      <div class="card glass fade-up" style="animation-delay:.24s">
+        <div class="card-head">
+          <div class="ci">📡</div>
+          <div style="flex:1"><h3>Live Sessions</h3><p>Auto-refresh har 4 second</p></div>
+          <button class="btn btn-ghost btn-sm" onclick="loadSessions()">🔄 Refresh</button>
+        </div>
+        <div class="sess-list" id="sessList">
+          <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
         </div>
       </div>
-    </section>
-  </div>
-</div>
-
-<!-- ==================== NEW SESSION MODAL ==================== -->
-<div id="newModal" class="overlay hidden">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>➕ New Session — WALEED KHAN</h3>
-      <button class="icon-btn" onclick="closeNewSession()">✖</button>
-    </div>
-    <div class="modal-body">
-      <div class="type-cards">
-        <div class="type-card active" data-t="message" onclick="setNsType('message',this)"><span class="ic">💬</span><b>Message</b><small>Text loop</small></div>
-        <div class="type-card" data-t="image" onclick="setNsType('image',this)"><span class="ic">🖼️</span><b>Image</b><small>Photo + caption</small></div>
-        <div class="type-card" data-t="sticker" onclick="setNsType('sticker',this)"><span class="ic">🎭</span><b>Sticker</b><small>Sticker loop</small></div>
-      </div>
-
-      <div class="field"><label>CREDS.JSON * (WhatsApp number credentials)</label><input id="nsCreds" type="file" accept=".json,application/json"/></div>
-
-      <div id="nsPrefixRow" class="field"><label>PREFIX NAME * (har message se pehle)</label><input id="nsPrefix" placeholder="e.g. WALEED KHAN"/></div>
-
-      <div id="nsMessageRow" class="field"><label>MESSAGE FILE * (.txt — har line ek message)</label><input id="nsMessage" type="file" accept=".txt,text/plain"/></div>
-
-      <div id="nsMediaRow" class="field hidden"><label id="nsMediaLbl">MEDIA FILES * (multiple allowed)</label><input id="nsMedia" type="file" multiple/></div>
-
-      <div class="grid2">
-        <div class="field"><label>TARGET TYPE</label>
-          <select id="nsTargetType">
-            <option value="contacts">👤 Contacts (numbers)</option>
-            <option value="gc">👥 Group (gc id)</option>
-          </select>
-        </div>
-        <div class="field"><label>DELAY (seconds)</label><input id="nsDelay" type="number" min="1" value="5"/></div>
-      </div>
-
-      <div class="field"><label>TARGET ID * — numbers comma/newline se, ya group id (bina @g.us)</label><textarea id="nsTargetID" placeholder="923001234567&#10;923007654321"></textarea></div>
-
-      <p id="nsHint" style="font-size:12.5px;color:var(--muted);line-height:1.6">💬 Message mode: prefix + message file zaroori hai.</p>
-
-      <button class="wa-btn primary block" onclick="createSession()">🚀 Session Start Karein</button>
     </div>
   </div>
 </div>
 
+<!-- ==================== LOGS MODAL ==================== -->
+<div id="logsOverlay" class="overlay hidden">
+  <div class="logs-modal glass">
+    <div class="logs-head">
+      <span class="lt"><span class="dot"></span> LIVE LOGS</span>
+      <span class="lid" id="logsTitle">—</span>
+      <button class="btn btn-ghost btn-sm" onclick="closeLogs()">✖ Close</button>
+    </div>
+    <div class="logs-body" id="logsBody">Loading logs...</div>
+  </div>
+</div>
+
+<footer>© 2026 <b>WALEED KHAN</b> — WHATSAPP AUTOMATION SERVER • POWERED BY BAILEYS</footer>
 <div id="toastWrap"></div>
 
 <script>
-/* ================= HELPERS ================= */
+/* ============ HELPERS ============ */
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-let APPROVAL_KEY = localStorage.getItem('wk_key') || '';
+let KEY = localStorage.getItem('wk_key') || '';
 let USER = localStorage.getItem('wk_user') || '';
 let ROLE = localStorage.getItem('wk_role') || '';
 let APPROVED = false;
-
-let sessions = [], sessionsFetchedAt = 0;
-let selectedId = null, filterType = 'all', searchQ = '';
-let logsTimer = null, sessTimer = null, tickTimer = null;
-let firstLogsRender = true;
-let nsType = 'message';
+let sessions = [], fetchedAt = 0, firstLoad = true;
+let logsTimer = null, sessTimer = null, curLogs = null, nsType = 'message';
 
 function toast(msg, type = 'info'){
   const t = document.createElement('div');
   t.className = 'toast ' + type; t.textContent = msg;
   $('toastWrap').appendChild(t);
-  setTimeout(() => { t.style.opacity = '0'; t.style.transition = '.4s'; setTimeout(() => t.remove(), 400); }, 3800);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transition = '.45s'; setTimeout(() => t.remove(), 450); }, 3800);
 }
 
 async function postJSON(url, data){
@@ -440,69 +478,74 @@ function fmtShort(ms){
   if(d) return d+'d '+h+'h'; if(h) return h+'h '+m+'m'; if(m) return m+'m '+s+'s'; return s+'s';
 }
 const typeEmoji = t => ({message:'💬',image:'🖼️',sticker:'🎭'}[t] || '💬');
+const typeLabel = t => ({message:'MESSAGE',image:'IMAGE',sticker:'STICKER'}[t] || 'MESSAGE');
 
-/* ================= APPROVAL ================= */
-async function generateApprovalKey(){
-  const btn = $('btnGenKey'); btn.disabled = true;
+/* ============ AUTH ============ */
+function setSteps(){
+  const s1 = $('stp1'), s2 = $('stp2'), s3 = $('stp3');
+  s1.className = 'stp' + (KEY ? ' done' : ' active');
+  s2.className = 'stp' + (APPROVED ? ' done' : (KEY ? ' active' : ''));
+  s3.className = 'stp' + (APPROVED ? ' active' : '');
+  $('stepKey').classList.toggle('hidden', APPROVED);
+  $('stepLogin').classList.toggle('hidden', !APPROVED);
+}
+
+async function generateKey(){
+  const b = $('btnGen'); b.disabled = true;
   try{
     const d = await postJSON('/api/generate-approval-key', {
       userAgent: navigator.userAgent, language: navigator.language || '',
       platform: navigator.platform || '', screenResolution: screen.width+'x'+screen.height,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || ''
     });
-    APPROVAL_KEY = d.approvalKey;
-    localStorage.setItem('wk_key', APPROVAL_KEY);
-    $('keyOut').textContent = APPROVAL_KEY;
-    $('authKeyMini').textContent = APPROVAL_KEY;
+    KEY = d.approvalKey; localStorage.setItem('wk_key', KEY);
+    $('keyOut').textContent = KEY;
     toast('✅ Approval key generate ho gayi', 'success');
     await checkApproval();
   }catch(e){ toast('❌ ' + e.message, 'error'); }
-  btn.disabled = false;
+  b.disabled = false;
 }
 
 function copyKey(){
-  if(!APPROVAL_KEY) return toast('Pehle key generate karein', 'error');
-  navigator.clipboard.writeText(APPROVAL_KEY).then(() => toast('📋 Key copy ho gayi — admin ko bhejein', 'success'));
+  if(!KEY) return toast('Pehle key generate karein', 'error');
+  navigator.clipboard.writeText(KEY).then(() => toast('📋 Key copy ho gayi — admin ko bhejein', 'success'));
 }
 
 async function checkApproval(manual){
-  if(!APPROVAL_KEY){ if(manual) toast('Pehle key generate karein', 'error'); return; }
+  if(!KEY){ if(manual) toast('Pehle key generate karein', 'error'); return; }
   try{
-    const d = await postJSON('/api/check-approval', { approvalKey: APPROVAL_KEY });
+    const d = await postJSON('/api/check-approval', { approvalKey: KEY });
     APPROVED = d.approved === true;
-    const b = $('keyStatus');
-    if(APPROVED){ b.className = 'badge ok'; b.textContent = '✅ KEY APPROVED'; if(manual) toast('✅ Key approved hai — login karein!', 'success'); }
-    else { b.className = 'badge pending'; b.textContent = '⏳ WAITING FOR APPROVAL'; if(manual) toast('⏳ Key abhi approved nahi hui', 'info'); }
-    updateViews();
+    const p = $('keyStatus');
+    if(APPROVED){
+      p.className = 'status-pill ok';
+      p.innerHTML = '<span class="dot"></span> KEY APPROVED — LOGIN READY';
+      if(manual) toast('✅ Key approved! Ab login karein', 'success');
+    } else {
+      p.className = 'status-pill wait';
+      p.innerHTML = '<span class="dot" style="background:var(--amber);box-shadow:0 0 10px var(--amber)"></span> WAITING FOR APPROVAL';
+      if(manual) toast('⏳ Key abhi approved nahi hui', 'info');
+    }
+    setSteps();
   }catch(e){ toast('❌ ' + e.message, 'error'); }
-}
-
-/* ================= VIEWS ================= */
-function updateViews(){
-  if(USER){ $('authView').classList.add('hidden'); $('appView').classList.remove('hidden'); }
-  else{
-    $('authView').classList.remove('hidden'); $('appView').classList.add('hidden');
-    $('authStep1').classList.toggle('hidden', APPROVED);
-    $('authStep2').classList.toggle('hidden', !APPROVED);
-  }
 }
 
 function switchAuthTab(t){
   $('authTabLogin').classList.toggle('active', t === 'login');
   $('authTabSignup').classList.toggle('active', t === 'signup');
-  $('loginForm').classList.toggle('hidden', t !== 'login');
-  $('signupForm').classList.toggle('hidden', t !== 'signup');
+  $('formLogin').classList.toggle('hidden', t !== 'login');
+  $('formSignup').classList.toggle('hidden', t !== 'signup');
 }
 
 async function doLogin(){
   const username = $('loginUser').value.trim(), password = $('loginPass').value;
   if(!username || !password) return toast('Username aur password dono zaroori hain', 'error');
   try{
-    const d = await postJSON('/api/login', { username, password, approvalKey: APPROVAL_KEY });
+    const d = await postJSON('/api/login', { username, password, approvalKey: KEY });
     USER = d.username; ROLE = d.role;
     localStorage.setItem('wk_user', USER); localStorage.setItem('wk_role', ROLE);
     toast('✅ Welcome, ' + USER + '!', 'success');
-    enterApp();
+    showDash();
   }catch(e){ toast('❌ ' + e.message, 'error'); }
 }
 
@@ -510,10 +553,9 @@ async function doSignup(){
   const username = $('signupUser').value.trim(), password = $('signupPass').value;
   if(!username || !password) return toast('Username aur password dono zaroori hain', 'error');
   try{
-    await postJSON('/api/signup', { username, password, approvalKey: APPROVAL_KEY });
+    await postJSON('/api/signup', { username, password, approvalKey: KEY });
     toast('✅ Account ban gaya! Ab login karein', 'success');
-    $('loginUser').value = username;
-    switchAuthTab('login');
+    $('loginUser').value = username; switchAuthTab('login');
   }catch(e){ toast('❌ ' + e.message, 'error'); }
 }
 
@@ -522,24 +564,25 @@ function logout(){
   location.reload();
 }
 
-/* ================= APP ================= */
-function enterApp(){
-  updateViews();
-  $('sbName').textContent = USER;
-  $('sbRole').textContent = ROLE;
-  $('sbAvatar').textContent = (USER[0] || 'U').toUpperCase();
-  if(ROLE === 'admin') $('usersChip').classList.remove('hidden');
+/* ============ DASHBOARD ============ */
+function showDash(){
+  $('authView').classList.add('hidden');
+  $('dashView').classList.remove('hidden');
+  $('userName').textContent = USER;
+  $('helloName').textContent = USER;
+  $('userRole').textContent = ROLE.toUpperCase();
+  $('userAvatar').textContent = (USER[0] || 'U').toUpperCase();
+  $('dateLine').textContent = new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  if(ROLE === 'admin') $('usersStat').classList.remove('hidden');
   loadStats(); loadSessions();
   if(sessTimer) clearInterval(sessTimer);
   sessTimer = setInterval(() => { loadSessions(); loadStats(true); }, 4000);
-  if(tickTimer) clearInterval(tickTimer);
-  tickTimer = setInterval(tickHeader, 1000);
 }
 
 async function loadStats(silent){
   try{
     const u = await fetch('/api/uptime').then(r => r.json());
-    if(u.ok) $('statUptime').textContent = fmtShort(u.uptimeMs) + ' uptime';
+    if(u.ok){ $('navUptime').textContent = fmtShort(u.uptimeMs); $('statUptime').textContent = fmtShort(u.uptimeMs); }
   }catch(e){}
   try{
     const d = await postJSON('/api/total-sessions', { username: USER, role: ROLE });
@@ -556,147 +599,122 @@ async function loadStats(silent){
 async function loadSessions(){
   try{
     const d = await postJSON('/api/sessions', { username: USER, role: ROLE });
-    sessions = d.sessions || []; sessionsFetchedAt = Date.now();
-    renderChatList();
-  }catch(e){}
+    sessions = d.sessions || []; fetchedAt = Date.now();
+    renderSessions();
+  }catch(e){ if(firstLoad) renderSessions(); }
 }
 
-function setFilter(f, btn){
-  filterType = f;
-  document.querySelectorAll('.ftab').forEach(b => b.classList.toggle('active', b === btn));
-  renderChatList();
-}
-
-function renderChatList(){
-  const wrap = $('chatList');
-  let list = sessions.filter(s => filterType === 'all' || (s.sessionType || 'message') === filterType);
-  if(searchQ) list = list.filter(s => ((s.sessionId||'') + (s.username||'') + (s.prefixName||'')).toLowerCase().includes(searchQ.toLowerCase()));
-  if(!list.length){
-    wrap.innerHTML = '<div class="list-empty">📭 Koi session nahi mila.<br>Green ➕ button se naya session banayein.</div>';
+function renderSessions(){
+  firstLoad = false;
+  const wrap = $('sessList');
+  if(!sessions.length){
+    wrap.innerHTML = `<div class="empty-state"><span class="e-ic">📭</span><p>Koi active session nahi hai.<br>Left side se apna pehla session launch karein 🚀</p></div>`;
     return;
   }
-  wrap.innerHTML = list.map(s => {
-    const up = fmtShort((s.uptimeMs || 0) + (Date.now() - sessionsFetchedAt));
-    const preview = (s.target === 'gc' ? '👥 Group: ' + (s.groupId || '?') : '👤 Contacts')
-      + ' • ⏳' + Math.round((s.delayMs||0)/1000) + 's'
-      + (s.mediaCount ? ' • 🖼️' + s.mediaCount : '');
-    return `<div class="chat-item ${s.sessionId === selectedId ? 'active' : ''}" onclick="selectSession('${s.sessionId}')">
-      <div class="chat-avatar">${typeEmoji(s.sessionType)}</div>
-      <div class="chat-mid">
-        <div class="chat-line1"><span class="chat-name">${esc(s.prefixName || s.sessionId)}</span><span class="chat-time">${up}</span></div>
-        <div class="chat-line2"><span class="chat-preview">▶ ${esc(preview)}</span></div>
-      </div></div>`;
+  wrap.innerHTML = sessions.map((s, i) => {
+    const up = fmtShort((s.uptimeMs || 0) + (Date.now() - fetchedAt));
+    return `<div class="sess-item" style="animation-delay:${Math.min(i * .05, .3)}s">
+      <div class="sess-icon">${typeEmoji(s.sessionType)}</div>
+      <div class="sess-body">
+        <div class="sess-top">
+          <b>${esc(s.prefixName || typeLabel(s.sessionType) + ' Session')}</b>
+          <span class="live-pill"><span class="dot" style="width:6px;height:6px"></span>LIVE</span>
+        </div>
+        <div class="sess-meta">
+          <span class="m-chip">${s.target === 'gc' ? '👥 Group' : '👤 Contacts'}</span>
+          <span class="m-chip">⏳ ${Math.round((s.delayMs||0)/1000)}s delay</span>
+          <span class="m-chip">🖼️ ${s.mediaCount || 0} files</span>
+          <span class="m-chip">⏱️ ${up}</span>
+        </div>
+        <div class="sess-id">${esc(s.sessionId)} • by ${esc(s.username)}</div>
+      </div>
+      <div class="sess-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openLogs('${esc(s.sessionId)}')">📜 Logs</button>
+        <button class="btn btn-danger btn-sm" onclick="stopSession('${esc(s.sessionId)}')">🛑 Stop</button>
+      </div>
+    </div>`;
   }).join('');
 }
 
-/* ================= CHAT VIEW ================= */
-function selectSession(id){
-  selectedId = id; firstLogsRender = true;
-  const s = sessions.find(x => x.sessionId === id);
-  $('emptyState').classList.add('hidden');
-  $('chatView').classList.remove('hidden');
-  $('appShell').classList.add('chat-open');
-  if(s){
-    $('chatName').textContent = s.prefixName || s.sessionId;
-    $('chatAvatar').textContent = typeEmoji(s.sessionType);
-    const pill = $('chatTypePill');
-    pill.textContent = (s.sessionType || 'message').toUpperCase();
-    pill.className = 'type-pill tp-' + (s.sessionType || 'message');
-    $('chatFooterInfo').innerHTML =
-      (s.target === 'gc' ? '👥 Group: <b>' + esc(s.groupId || '?') + '</b>' : '👤 Contacts blast')
-      + ' &nbsp;•&nbsp; ⏳ delay <b>' + Math.round((s.delayMs||0)/1000) + 's</b>'
-      + ' &nbsp;•&nbsp; 🖼️ media <b>' + (s.mediaCount||0) + '</b>'
-      + ' &nbsp;•&nbsp; 🆔 <b>' + esc(s.sessionId) + '</b>';
-  }
-  tickHeader();
-  fetchLogs();
-  if(logsTimer) clearInterval(logsTimer);
-  logsTimer = setInterval(fetchLogs, 2500);
-  renderChatList();
-}
-
-function closeChat(){
-  selectedId = null;
-  if(logsTimer) clearInterval(logsTimer);
-  $('chatView').classList.add('hidden');
-  $('emptyState').classList.remove('hidden');
-  $('appShell').classList.remove('chat-open');
-  renderChatList();
-}
-
-function tickHeader(){
-  if(!selectedId) return;
-  const s = sessions.find(x => x.sessionId === selectedId);
-  if(s) $('chatUptime').textContent = fmtShort((s.uptimeMs || 0) + (Date.now() - sessionsFetchedAt));
-}
-
-function classify(msg){
-  if(/sent to|✅/.test(msg)) return 'out';
-  if(/❌|error|failed|removed|closed|timeout|expired|invalid|unauthorized/i.test(msg)) return 'err';
-  if(/⚠️|warn|reconnect/i.test(msg)) return 'warn';
-  return 'in';
-}
-
-async function fetchLogs(){
-  if(!selectedId) return;
+async function stopSession(id){
+  if(!confirm('Session ' + id + ' ko stop karna hai? Saari session files cleanup ho jayengi.')) return;
   try{
-    const d = await postJSON('/api/logs/' + encodeURIComponent(selectedId), { username: USER, role: ROLE });
-    const body = $('chatBody');
-    const nearBottom = body.scrollHeight - body.scrollTop - body.clientHeight < 110;
-    let html = '<div class="day-chip">🔒 Live server logs — har 2.5s auto-refresh</div><div class="day-chip">TODAY</div>';
-    const logs = d.logs || [];
-    if(!logs.length) html += '<div class="day-chip">Logs abhi khali hain...</div>';
-    for(const line of logs){
-      const m = line.match(/^\[([^\]]+)\]\s*(.*)$/);
-      const time = m ? m[1] : '', msg = m ? m[2] : line;
-      const cls = classify(msg);
-      let clock = '';
-      try{ clock = new Date(time).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }); }catch(e){}
-      if(cls === 'out'){
-        html += `<div class="msg-row out"><div class="bubble">${esc(msg)}<span class="meta">${clock} <span class="ticks">✓✓</span></span></div></div>`;
-      } else {
-        html += `<div class="msg-row in"><div class="bubble ${cls === 'err' ? 'err' : cls === 'warn' ? 'warn' : ''}">${esc(msg)}<span class="meta">${clock}</span></div></div>`;
-      }
-    }
-    body.innerHTML = html;
-    if(nearBottom || firstLogsRender) body.scrollTop = body.scrollHeight;
-    firstLogsRender = false;
-  }catch(e){}
-}
-
-async function stopSelected(){
-  if(!selectedId) return;
-  if(!confirm('Session ' + selectedId + ' ko stop karna hai? Files cleanup ho jayengi.')) return;
-  try{
-    await postJSON('/stop-session/' + encodeURIComponent(selectedId), { username: USER });
+    await postJSON('/stop-session/' + encodeURIComponent(id), { username: USER });
     toast('🛑 Session stop ho gaya', 'success');
-    closeChat(); loadSessions();
+    if(curLogs === id) closeLogs();
+    loadSessions(); loadStats(true);
   }catch(e){ toast('❌ ' + e.message, 'error'); }
 }
 
-/* ================= NEW SESSION ================= */
-function openNewSession(){ $('newModal').classList.remove('hidden'); setNsType(nsType); }
-function closeNewSession(){ $('newModal').classList.add('hidden'); }
+/* ============ LOGS ============ */
+function openLogs(id){
+  curLogs = id;
+  $('logsTitle').textContent = id;
+  $('logsBody').innerHTML = '<div style="color:var(--dim);padding:14px">Loading logs...</div>';
+  $('logsOverlay').classList.remove('hidden');
+  fetchLogs();
+  if(logsTimer) clearInterval(logsTimer);
+  logsTimer = setInterval(fetchLogs, 2500);
+}
 
+function closeLogs(){
+  curLogs = null;
+  if(logsTimer) clearInterval(logsTimer);
+  $('logsOverlay').classList.add('hidden');
+}
+
+async function fetchLogs(){
+  if(!curLogs) return;
+  try{
+    const d = await postJSON('/api/logs/' + encodeURIComponent(curLogs), { username: USER, role: ROLE });
+    const body = $('logsBody');
+    const nearBottom = body.scrollHeight - body.scrollTop - body.clientHeight < 130;
+    const logs = d.logs || [];
+    if(!logs.length){ body.innerHTML = '<div style="color:var(--dim);padding:14px">Logs abhi khali hain...</div>'; return; }
+    body.innerHTML = logs.map(line => {
+      const m = line.match(/^\[([^\]]+)\]\s*(.*)$/);
+      const iso = m ? m[1] : '', msg = m ? m[2] : line;
+      let cls = 'info', clock = iso.slice(11, 19);
+      if(/✅|sent to|success|open|started|created|restored|reconnect successful/i.test(msg)) cls = 'ok';
+      else if(/❌|error|failed|removed|closed|timeout|expired|invalid|unauthorized|cleanup/i.test(msg)) cls = 'err';
+      else if(/⚠️|warn|reconnect|waiting/i.test(msg)) cls = 'warn';
+      return `<div class="log-line ${cls}"><span class="log-dot"></span><span class="log-time">${esc(clock)}</span><span class="log-msg">${esc(msg)}</span></div>`;
+    }).join('');
+    if(nearBottom) body.scrollTop = body.scrollHeight;
+  }catch(e){}
+}
+
+/* ============ CREATE SESSION ============ */
 function setNsType(t, el){
   nsType = t;
-  document.querySelectorAll('.type-card').forEach(c => c.classList.toggle('active', c.dataset.t === t));
-  $('nsPrefixRow').classList.toggle('hidden', t === 'sticker');
-  $('nsMessageRow').classList.toggle('hidden', t === 'sticker');
-  $('nsMediaRow').classList.toggle('hidden', t === 'message');
-  const media = $('nsMedia');
-  if(t === 'image'){ media.accept = 'image/*'; $('nsMediaLbl').textContent = 'IMAGE FILES * (multiple, caption ke sath)'; $('nsHint').textContent = '🖼️ Image mode: prefix + message file (caption) + kam az kam 1 image zaroori hai.'; }
-  else if(t === 'sticker'){ media.accept = 'image/*,.webp'; $('nsMediaLbl').textContent = 'STICKER FILES * (.webp recommended)'; $('nsHint').textContent = '🎭 Sticker mode: sirf sticker files zaroori hain (prefix/message ignore hoga).'; }
-  else { media.removeAttribute('accept'); $('nsHint').textContent = '💬 Message mode: prefix + message file zaroori hai.'; }
+  document.querySelectorAll('.seg-btn').forEach(b => b.classList.toggle('active', b.dataset.t === t));
+  $('rowPrefix').classList.toggle('hidden', t === 'sticker');
+  $('rowMessage').classList.toggle('hidden', t === 'sticker');
+  $('rowMedia').classList.toggle('hidden', t === 'message');
+  const media = $('csMedia');
+  if(t === 'image'){ media.accept = 'image/*'; $('fzMediaTx').textContent = 'Image files select karein (multiple) *'; $('csHint').innerHTML = '<b>🖼️ Image mode:</b> prefix + caption file + kam az kam 1 image. Images cycle hoti rahengi.'; }
+  else if(t === 'sticker'){ media.accept = 'image/*,.webp'; $('fzMediaTx').textContent = 'Sticker files select karein (.webp) *'; $('csHint').innerHTML = '<b>🎭 Sticker mode:</b> sirf sticker files zaroori hain — prefix/message ignore hoga.'; }
+  else { media.removeAttribute('accept'); $('csHint').innerHTML = '<b>💬 Message mode:</b> prefix + message file zaroori hai. Har message delay ke sath repeat hota rahega.'; }
+}
+
+function fzUpdate(input, txtId, zoneId, def){
+  const has = input.files && input.files.length;
+  $(txtId).textContent = has ? input.files[0].name : def + ' *';
+  $(zoneId).classList.toggle('has', !!has);
+}
+function fzMediaUpdate(input){
+  const n = input.files ? input.files.length : 0;
+  $('fzMediaTx').textContent = n ? n + ' file(s) selected ✅' : 'Media files select karein (multiple) *';
+  $('fzMedia').classList.toggle('has', n > 0);
 }
 
 async function createSession(){
   try{
-    const prefix = $('nsPrefix').value.trim();
-    const type = $('nsTargetType').value;
-    const targetID = $('nsTargetID').value.trim();
-    const delayTime = $('nsDelay').value || '5';
-    const creds = $('nsCreds').files[0], msgFile = $('nsMessage').files[0], mediaFiles = $('nsMedia').files;
+    const prefix = $('csPrefix').value.trim();
+    const type = $('csTargetType').value;
+    const targetID = $('csTarget').value.trim();
+    const delayTime = $('csDelay').value || '5';
+    const creds = $('csCreds').files[0], msgFile = $('csMessage').files[0], mediaFiles = $('csMedia').files;
 
     if(!creds) return toast('❌ creds.json upload karein', 'error');
     if(!targetID) return toast('❌ Target ID zaroori hai', 'error');
@@ -712,28 +730,35 @@ async function createSession(){
     fd.append('targetID', targetID);
     fd.append('delayTime', delayTime);
     fd.append('username', USER);
-    fd.append('approvalKey', APPROVAL_KEY);
+    fd.append('approvalKey', KEY);
     fd.append('creds', creds);
     if(msgFile) fd.append('messageFile', msgFile);
     for(const f of mediaFiles) fd.append('mediaFiles', f);
 
-    toast('⏳ Session create ho raha hai...', 'info');
+    toast('⏳ Session launch ho raha hai...', 'info');
     const r = await fetch('/send-message', { method:'POST', body: fd });
     const d = await r.json();
     if(!r.ok || d.ok === false) throw new Error(d.error || 'Session create failed');
 
-    toast('✅ Session start: ' + d.sessionId, 'success');
-    closeNewSession();
-    $('nsTargetID').value = ''; $('nsCreds').value = ''; $('nsMessage').value = ''; $('nsMedia').value = '';
-    await loadSessions();
-    selectSession(d.sessionId);
+    toast('🚀 Session live: ' + d.sessionId, 'success');
+    $('csTarget').value = ''; $('csCreds').value = ''; $('csMessage').value = ''; $('csMedia').value = '';
+    fzUpdate($('csCreds'), 'fzCredsTx', 'fzCreds', 'creds.json');
+    fzUpdate($('csMessage'), 'fzMsgTx', 'fzMsg', 'message.txt');
+    fzMediaUpdate($('csMedia'));
+    await loadSessions(); loadStats(true);
   }catch(e){ toast('❌ ' + e.message, 'error'); }
 }
 
-/* ================= INIT ================= */
+/* ============ INIT ============ */
 (async function init(){
-  if(APPROVAL_KEY){ $('keyOut').textContent = APPROVAL_KEY; $('authKeyMini').textContent = APPROVAL_KEY; await checkApproval(); }
-  if(USER) enterApp(); else updateViews();
+  if(KEY){ $('keyOut').textContent = KEY; await checkApproval(); }
+  setSteps();
+  if(USER) showDash();
+  // live uptime on auth screen too
+  setInterval(async () => {
+    if(USER) return;
+    try{ const u = await fetch('/api/uptime').then(r => r.json()); }catch(e){}
+  }, 30000);
 })();
 </script>
 </body>
